@@ -1,0 +1,315 @@
+{% comment %}
+  Section: LEFT = pretitle + h2 heading, RIGHT = 2x2 grid, RIGHT half shows background image underneath.
+{% endcomment %}
+
+{% assign sid = section.id | replace: '_', '' | downcase %}
+
+<section class="custom-grid-with-heading sf-split-grid-h-{{ sid }}">
+  <div class="sf-split-grid-h__bg-{{ sid }}">
+    {% if section.settings.background_image != blank %}
+      <img
+        class="sf-split-grid-h__bg-img-{{ sid }}"
+        src="{{ section.settings.background_image | image_url: width: 1800 }}"
+        alt="{{ section.settings.background_image.alt | escape }}"
+        loading="lazy"
+        width="1800"
+        height="1800"
+      >
+    {% endif %}
+  </div>
+
+  <div class="sf-split-grid-h__wrap-{{ sid }} page-width">
+    <div class="sf-split-grid-h__left-{{ sid }}">
+      <div class="sf-split-grid-h__content-{{ sid }}">
+        {% if section.settings.pretitle != blank %}
+          <div class="section-header__pretitle">
+            {% if section.settings.pretitle_icon != blank %}
+              <img
+                class="section-header__pretitle-icon"
+                src="{{ section.settings.pretitle_icon | image_url: width: 48 }}"
+                alt=""
+                loading="lazy"
+                width="30"
+                height="30"
+              >
+            {% endif %}
+            <span>{{ section.settings.pretitle }}</span>
+          </div>
+        {% endif %}
+
+        {% if section.settings.heading != blank %}
+          <h2 class="sf-split-grid-h__heading-{{ sid }}">{{ section.settings.heading }}</h2>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="sf-split-grid-h__right-{{ sid }}">
+      <div class="sf-split-grid-h__grid-{{ sid }}">
+        {% for i in (1..4) %}
+          {% liquid
+            assign image_key = 'item_' | append: i | append: '_image'
+            assign title_key = 'item_' | append: i | append: '_title'
+            assign text_key  = 'item_' | append: i | append: '_text'
+
+            assign item_image = section.settings[image_key]
+            assign item_title = section.settings[title_key]
+            assign item_text  = section.settings[text_key]
+          %}
+
+          <div class="sf-split-grid-h__item-{{ sid }}">
+            <div class="sf-split-grid-h__iconwrap-{{ sid }}">
+              {% if item_image != blank %}
+                <img
+                  class="sf-split-grid-h__icon-{{ sid }}"
+                  src="{{ item_image | image_url: width: 200 }}"
+                  alt="{{ item_image.alt | escape }}"
+                  loading="lazy"
+                  width="200"
+                  height="200"
+                >
+              {% else %}
+                <div class="sf-split-grid-h__iconph-{{ sid }}">
+                  {{ 'image' | placeholder_svg_tag }}
+                </div>
+              {% endif %}
+            </div>
+
+            {% if item_title != blank %}
+              <h3 class="sf-split-grid-h__title-{{ sid }}">{{ item_title }}</h3>
+            {% endif %}
+
+            {% if item_text != blank %}
+              <p class="sf-split-grid-h__text-{{ sid }}">{{ item_text }}</p>
+            {% endif %}
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .sf-split-grid-h-{{ sid }}{
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    padding: {{ section.settings.section_padding_y }}px 0;
+    min-height: {{ section.settings.min_height }}px;
+  }
+
+  /* Background image under the whole section, visually on the right half */
+  .sf-split-grid-h__bg-{{ sid }}{
+    position: absolute;
+    top: 0; right: 0;
+    width: 50%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+  .sf-split-grid-h__bg-img-{{ sid }}{
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center right;
+    display: block;
+  }
+
+  /* 50/50 split */
+  .sf-split-grid-h__wrap-{{ sid }}{
+    position: relative;
+    z-index: 1;
+    display: flex;
+    width: 100%;
+    min-height: {{ section.settings.min_height }}px;
+  }
+  .sf-split-grid-h__left-{{ sid }},
+  .sf-split-grid-h__right-{{ sid }}{
+    width: 50%;
+  }
+
+  /* Left column: vertically centered */
+  .sf-split-grid-h__left-{{ sid }}{
+    display: flex;
+    align-items: center;
+  }
+
+  /* Constrained content width (left) */
+  .sf-split-grid-h__content-{{ sid }}{
+    width: 100%;
+    max-width: {{ section.settings.content_max_width }}px;
+    padding: 0 {{ section.settings.section_padding_x }}px;
+  }
+
+  .sf-split-grid-h__heading-{{ sid }}{
+    margin: 0;
+    font-size: {{ section.settings.heading_size }}px;
+    color: {{ section.settings.heading_color }};
+    line-height: 1.15;
+    text-align: left;
+  }
+
+  /* Right side: vertically centered grid too */
+  .sf-split-grid-h__right-{{ sid }}{
+    display: flex;
+    align-items: center;
+    padding: 0 {{ section.settings.section_padding_x }}px;
+  }
+
+  /* Simple 2x2 grid */
+  .sf-split-grid-h__grid-{{ sid }}{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: {{ section.settings.grid_gap }}px;
+    width: 100%;
+    height: 100%;
+    align-content: stretch;
+  }
+
+  .sf-split-grid-h__item-{{ sid }}{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: {{ section.settings.item_gap }}px;
+    min-width: 0;
+  }
+
+  /* icon wrapper 30% width and centered */
+  .sf-split-grid-h__iconwrap-{{ sid }}{
+    width: 30%;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+  }
+  .sf-split-grid-h__icon-{{ sid }}{
+    max-height: 50px;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    display: block;
+  }
+  .sf-split-grid-h__iconph-{{ sid }}{
+    width: 50px;
+    height: 50px;
+    background: #f2f2f2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .sf-split-grid-h__iconph-{{ sid }} svg{
+    width: 28px;
+    height: 28px;
+  }
+
+  .sf-split-grid-h__title-{{ sid }}{
+    margin: 0;
+    font-size: {{ section.settings.title_size }}px;
+    color: {{ section.settings.title_color }};
+    line-height: 1.25;
+    text-align: left;
+  }
+  .sf-split-grid-h__text-{{ sid }}{
+    margin: 0;
+    font-size: {{ section.settings.text_size }}px;
+    color: {{ section.settings.text_color }};
+    line-height: 1.55;
+    text-align: left;
+  }
+
+  /* Mobile */
+  @media (max-width: 768px){
+    .sf-split-grid-h__wrap-{{ sid }}{
+      flex-direction: column;
+      min-height: auto;
+    }
+    .sf-split-grid-h__left-{{ sid }},
+    .sf-split-grid-h__right-{{ sid }}{
+      width: 100%;
+    }
+
+    .sf-split-grid-h__bg-{{ sid }}{
+      position: relative;
+      width: 100%;
+      /*height: {{ section.settings.mobile_bg_height }}px;*/
+    }
+
+    .sf-split-grid-h__left-{{ sid }}{
+      align-items: flex-start;
+      padding-bottom: 20px;
+    }
+
+    .sf-split-grid-h__right-{{ sid }}{
+      align-items: stretch;
+      padding-bottom: 20px;
+    }
+
+    .sf-split-grid-h__grid-{{ sid }}{
+      grid-template-columns: 1fr;
+      height: auto;
+    }
+    .sf-split-grid-h-{{ sid }} {
+      padding:0
+    }
+    .custom-text-columns-template--20259326460042__custom_text_columns_bfCmhr {
+  padding: 0 20px;
+  }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Custom grid with heading",
+  "settings": [
+    { "type": "header", "content": "Background" },
+    { "type": "image_picker", "id": "background_image", "label": "Background image (right)" },
+
+    { "type": "header", "content": "Header (left)" },
+    { "type": "text", "id": "pretitle", "label": "Pre-title", "default": "Pre-title" },
+    { "type": "image_picker", "id": "pretitle_icon", "label": "Pre-title icon" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Heading" },
+
+    { "type": "header", "content": "Layout" },
+    { "type": "range", "id": "min_height", "label": "Minimum height", "min": 360, "max": 1000, "step": 20, "unit": "px", "default": 600 },
+    { "type": "range", "id": "section_padding_y", "label": "Padding top/bottom", "min": 0, "max": 140, "step": 10, "unit": "px", "default": 40 },
+    { "type": "range", "id": "section_padding_x", "label": "Side padding (left/right columns)", "min": 0, "max": 90, "step": 5, "unit": "px", "default": 40 },
+    { "type": "range", "id": "content_max_width", "label": "Left content max width", "min": 320, "max": 900, "step": 10, "unit": "px", "default": 620 },
+    { "type": "range", "id": "mobile_bg_height", "label": "Mobile background height", "min": 180, "max": 520, "step": 20, "unit": "px", "default": 300 },
+
+    { "type": "header", "content": "Grid spacing" },
+    { "type": "range", "id": "grid_gap", "label": "Grid gap", "min": 10, "max": 70, "step": 5, "unit": "px", "default": 30 },
+    { "type": "range", "id": "item_gap", "label": "Item internal gap", "min": 4, "max": 30, "step": 2, "unit": "px", "default": 12 },
+
+    { "type": "header", "content": "Typography" },
+    { "type": "range", "id": "heading_size", "label": "Heading size", "min": 18, "max": 56, "step": 2, "unit": "px", "default": 34 },
+    { "type": "color", "id": "heading_color", "label": "Heading color", "default": "#111111" },
+    { "type": "range", "id": "title_size", "label": "Item title size (h3)", "min": 14, "max": 32, "step": 1, "unit": "px", "default": 20 },
+    { "type": "color", "id": "title_color", "label": "Item title color", "default": "#111111" },
+    { "type": "range", "id": "text_size", "label": "Item text size", "min": 12, "max": 20, "step": 1, "unit": "px", "default": 14 },
+    { "type": "color", "id": "text_color", "label": "Item text color", "default": "#666666" },
+
+    { "type": "header", "content": "Item 1" },
+    { "type": "image_picker", "id": "item_1_image", "label": "Image (icon/webp)" },
+    { "type": "text", "id": "item_1_title", "label": "Title", "default": "Feature one" },
+    { "type": "textarea", "id": "item_1_text", "label": "Text", "default": "Describe your feature here." },
+
+    { "type": "header", "content": "Item 2" },
+    { "type": "image_picker", "id": "item_2_image", "label": "Image (icon/webp)" },
+    { "type": "text", "id": "item_2_title", "label": "Title", "default": "Feature two" },
+    { "type": "textarea", "id": "item_2_text", "label": "Text", "default": "Describe your feature here." },
+
+    { "type": "header", "content": "Item 3" },
+    { "type": "image_picker", "id": "item_3_image", "label": "Image (icon/webp)" },
+    { "type": "text", "id": "item_3_title", "label": "Title", "default": "Feature three" },
+    { "type": "textarea", "id": "item_3_text", "label": "Text", "default": "Describe your feature here." },
+
+    { "type": "header", "content": "Item 4" },
+    { "type": "image_picker", "id": "item_4_image", "label": "Image (icon/webp)" },
+    { "type": "text", "id": "item_4_title", "label": "Title", "default": "Feature four" },
+    { "type": "textarea", "id": "item_4_text", "label": "Text", "default": "Describe your feature here." },
+
+    { "type": "checkbox", "id": "divider", "label": "Show divider", "default": false }
+  ],
+  "presets": [
+    { "name": "Custom grid with heading" }
+  ]
+}
+{% endschema %}
