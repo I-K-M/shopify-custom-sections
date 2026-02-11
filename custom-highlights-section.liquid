@@ -1,0 +1,324 @@
+{% comment %}
+  Section: Custom highlights dyn
+  - Background image + overlay
+  - Pretitle (icon + text)
+  - Heading + intro
+  - Dynamic cards (icon + title + text)
+{% endcomment %}
+
+{% assign sid = section.id | replace: '_', '' | downcase %}
+
+<section class="custom-highlights custom-highlights-{{ sid }}">
+  <!-- Background -->
+  <div class="custom-highlights__bg-{{ sid }}">
+    {% if section.settings.background_image != blank %}
+      <img
+        class="custom-highlights__bg-img-{{ sid }}"
+        src="{{ section.settings.background_image | image_url: width: 2400 }}"
+        alt="{{ section.settings.background_image.alt | escape }}"
+        loading="lazy"
+        width="2400"
+        height="1200"
+      >
+    {% endif %}
+    <div class="custom-highlights__overlay-{{ sid }}"></div>
+  </div>
+
+  <div class="page-width custom-highlights__wrap-{{ sid }}">
+    <!-- Header -->
+    <div class="custom-highlights__header-{{ sid }}">
+      {% if section.settings.pretitle != blank %}
+        <div class="custom-highlights__pretitle-{{ sid }}">
+          {% if section.settings.pretitle_icon != blank %}
+            <img
+              src="{{ section.settings.pretitle_icon | image_url: width: 48 }}"
+              alt=""
+              loading="lazy"
+              width="30"
+              height="30"
+            >
+          {% endif %}
+          <span>{{ section.settings.pretitle }}</span>
+        </div>
+      {% endif %}
+
+      {% if section.settings.heading != blank %}
+        <h2 class="custom-highlights__heading-{{ sid }}">{{ section.settings.heading }}</h2>
+      {% endif %}
+
+      {% if section.settings.text != blank %}
+        <div class="custom-highlights__text-{{ sid }}">{{ section.settings.text }}</div>
+      {% endif %}
+    </div>
+
+    <!-- Cards -->
+    {% if section.blocks.size > 0 %}
+      <div class="custom-highlights__cols-{{ sid }}">
+        {% for block in section.blocks %}
+          <div class="custom-highlights__col-{{ sid }} custom-highlights__col-{{ sid }}--{{ block.settings.icon_position }}" {{ block.shopify_attributes }}>
+            <div class="custom-highlights__iconwrap-{{ sid }}">
+              {% assign icon_class = 'custom-highlights__icon-' | append: sid %}
+              {% if block.settings.icon != blank %}
+                {{ block.settings.icon
+                  | image_url: width: 120
+                  | image_tag:
+                      class: icon_class,
+                      loading: 'lazy'
+                }}
+              {% else %}
+                <div class="custom-highlights__iconph-{{ sid }}">
+                  {{ 'image' | placeholder_svg_tag }}
+                </div>
+              {% endif %}
+            </div>
+
+            <div class="custom-highlights__textwrap-{{ sid }}">
+              {% if block.settings.title != blank %}
+                <h3 class="custom-highlights__title-{{ sid }}">{{ block.settings.title }}</h3>
+              {% endif %}
+
+              {% if block.settings.text != blank %}
+                <div class="custom-highlights__body-{{ sid }}">{{ block.settings.text }}</div>
+              {% endif %}
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+</section>
+
+<style>
+.custom-highlights-{{ sid }}{
+  position: relative;
+  overflow: hidden;
+  padding-top: {{ section.settings.section_padding_top }}px;
+  padding-bottom: {{ section.settings.section_padding_bottom }}px;
+  margin-top: {{ section.settings.section_margin_top }}px;
+  margin-bottom: {{ section.settings.section_margin_bottom }}px;
+  color: {{ section.settings.text_color }};
+}
+.custom-highlights__bg-{{ sid }}{
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+.custom-highlights__bg-img-{{ sid }}{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.custom-highlights__overlay-{{ sid }}{
+  position: absolute;
+  inset: 0;
+  background: {{ section.settings.overlay_color }};
+  opacity: {{ section.settings.overlay_opacity | divided_by: 100.0 }};
+}
+
+.custom-highlights__wrap-{{ sid }}{
+  position: relative;
+  z-index: 1;
+  text-align: center;
+}
+
+.custom-highlights__header-{{ sid }}{
+  max-width: {{ section.settings.header_max_width }}px;
+  margin: 0 auto {{ section.settings.header_gap }}px auto;
+}
+
+.custom-highlights__pretitle-{{ sid }}{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+  letter-spacing: 0.08em;
+}
+
+.custom-highlights__heading-{{ sid }}{
+  margin: 0;
+  font-size: {{ section.settings.heading_size }}px;
+  line-height: 1.1;
+  color: {{ section.settings.heading_color }};
+}
+
+.custom-highlights__text-{{ sid }}{
+  margin-top: 14px;
+  font-size: {{ section.settings.body_size }}px;
+  line-height: 1.5;
+}
+.custom-highlights__text-{{ sid }} p{ margin: 0; }
+
+/* Cards grid */
+.custom-highlights__cols-{{ sid }}{
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: {{ section.settings.col_gap }}px;
+}
+
+.custom-highlights__col-{{ sid }}{
+  text-align: left;
+  display: flex;
+  gap: 12px;
+}
+
+/* icon above */
+.custom-highlights__col-{{ sid }}--top{
+  flex-direction: column;
+}
+
+/* icon left */
+.custom-highlights__col-{{ sid }}--left{
+  flex-direction: row;
+  align-items: flex-start;
+}
+
+.custom-highlights__iconwrap-{{ sid }}{
+  margin-bottom: 12px;
+}
+
+.custom-highlights__icon-{{ sid }}{
+  max-height: 50px;
+  min-width: 42px;
+  width: auto;
+  display: block;
+}
+
+.custom-highlights__iconph-{{ sid }}{
+  width: 50px;
+  height: 50px;
+  background: rgba(255,255,255,0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.custom-highlights__title-{{ sid }}{
+  margin: 0 0 8px 0;
+  font-size: {{ section.settings.col_title_size }}px;
+  line-height: 1.25;
+  color: {{ section.settings.heading_color }};
+}
+
+.custom-highlights__body-{{ sid }}{
+  font-size: {{ section.settings.col_body_size }}px;
+  line-height: 1.5;
+}
+
+@media (max-width: 600px){
+  .custom-highlights__cols-{{ sid }}{
+    grid-template-columns: 1fr;
+  }
+  .custom-highlights__col-{{ sid }}{
+    flex-direction: column;
+  }
+}
+</style>
+
+{% schema %}
+{
+  "name": "Custom highlights dyn",
+  "class": "index-section",
+  "settings": [
+    { "type": "header", "content": "Background" },
+    { "type": "image_picker", "id": "background_image", "label": "Background image" },
+    { "type": "color", "id": "overlay_color", "label": "Overlay color", "default": "#0b6b3a" },
+    { "type": "range", "id": "overlay_opacity", "label": "Overlay opacity", "min": 0, "max": 100, "step": 5, "unit": "%", "default": 80 },
+
+    { "type": "header", "content": "Header" },
+    { "type": "text", "id": "pretitle", "label": "Pretitle" },
+    { "type": "image_picker", "id": "pretitle_icon", "label": "Pretitle icon" },
+    { "type": "text", "id": "heading", "label": "Heading" },
+    { "type": "richtext", "id": "text", "label": "Intro text" },
+
+    { "type": "header", "content": "Layout" },
+    { "type": "header", "content": "Spacing" },
+    {
+      "type": "range",
+      "id": "section_padding_top",
+      "label": "Section padding top",
+      "min": 0,
+      "max": 200,
+      "step": 10,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "section_padding_bottom",
+      "label": "Section padding bottom",
+      "min": 0,
+      "max": 240,
+      "step": 10,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "section_margin_top",
+      "label": "Section margin top",
+      "min": -200,
+      "max": 200,
+      "step": 10,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "section_margin_bottom",
+      "label": "Section margin bottom",
+      "min": -200,
+      "max": 200,
+      "step": 10,
+      "unit": "px",
+      "default": 0
+    },
+    { "type": "range", "id": "header_max_width", "label": "Header max width", "min": 420, "max": 1100, "step": 20, "unit": "px", "default": 900 },
+    { "type": "range", "id": "header_gap", "label": "Gap under header", "min": 10, "max": 80, "step": 5, "unit": "px", "default": 40 },
+    { "type": "range", "id": "col_gap", "label": "Columns gap", "min": 10, "max": 60, "step": 5, "unit": "px", "default": 30 },
+
+    { "type": "header", "content": "Typography" },
+    { "type": "range", "id": "heading_size", "label": "Heading size", "min": 24, "max": 70, "step": 2, "unit": "px", "default": 54 },
+    { "type": "range", "id": "body_size", "label": "Intro text size", "min": 12, "max": 22, "step": 1, "unit": "px", "default": 16 },
+    { "type": "range", "id": "col_title_size", "label": "Card title size", "min": 14, "max": 28, "step": 1, "unit": "px", "default": 16 },
+    { "type": "range", "id": "col_body_size", "label": "Card text size", "min": 12, "max": 20, "step": 1, "unit": "px", "default": 14 },
+    { "type": "color", "id": "heading_color", "label": "Heading color", "default": "#ffffff" },
+    { "type": "color", "id": "text_color", "label": "Text color", "default": "#dfeee6" }
+  ],
+  "blocks": [
+    {
+      "type": "highlight",
+      "name": "Highlight",
+      "settings": [
+        { "type": "image_picker", "id": "icon", "label": "Icon" },
+        {
+          "type": "select",
+          "id": "icon_position",
+          "label": "Icon position",
+          "options": [
+            { "value": "top", "label": "Above text" },
+            { "value": "left", "label": "Left of text" }
+          ],
+          "default": "top"
+        },
+        { "type": "text", "id": "title", "label": "Title" },
+        { "type": "richtext", "id": "text", "label": "Text" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom highlights dyn",
+      "blocks": [
+        { "type": "highlight" },
+        { "type": "highlight" },
+        { "type": "highlight" },
+        { "type": "highlight" }
+      ]
+    }
+  ],
+  "disabled_on": {
+    "groups": ["custom.popups"]
+  }
+}
+{% endschema %}
