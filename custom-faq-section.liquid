@@ -1,0 +1,226 @@
+{%- if section.settings.divider -%}<div class="section--divider">{%- endif -%}
+
+{% style %}
+#shopify-section-{{ section.id }} .faq-wrapper {
+  display: grid;
+  grid-template-columns: 1fr 1.3fr;
+  gap: 60px;
+}
+#shopify-section-{{ section.id }} .faq-left .section-header__title {
+  margin: 0;
+}
+#shopify-section-{{ section.id }} .section-header__pretitle {
+  justify-content: flex-start;
+}
+#shopify-section-{{ section.id }} .faq-left .btn {
+  margin-top: 24px;
+}
+
+/* FAQ items */
+#shopify-section-{{ section.id }} .faq-item {
+  border-bottom: 1px solid rgba(0,0,0,.15);
+  padding: 18px 0;
+}
+#shopify-section-{{ section.id }} .faq-item.is-open {
+  border-bottom: none;
+  padding: 0;
+  margin-bottom: 12px;
+}
+#shopify-section-{{ section.id }} .faq-item .collapsible-trigger {
+  padding-left: 3rem !important;
+}
+.collapsible-trigger__icon.collapsible-trigger__icon--circle.collapsible-trigger__icon--open {
+  margin-left: .5rem;
+}
+#shopify-section-{{ section.id }} .collapsible-trigger.collapsible-trigger--inline.collapsible--auto-height.text-left.is-open {
+    border-radius: 16px 16px 0 0 !important;
+}
+
+/* Active card */
+#shopify-section-{{ section.id }} .faq-item:hover .collapsible-trigger {
+  background: {{ section.settings.active_bg }};
+  color: {{ section.settings.active_text }};
+  border-radius: 16px;
+  padding: 18px 22px;
+  width: 100%;
+}
+#shopify-section-{{ section.id }} .faq-item .collapsible-trigger.is-open + .collapsible-content {
+  height: auto !important;
+  max-height: none !important;
+}
+#shopify-section-{{ section.id }} .faq-item .collapsible-trigger.is-open {
+  background: {{ section.settings.active_bg }};
+  color: {{ section.settings.active_text }};
+  border-radius: 16px 16px 0 0;
+  padding: 18px 22px;
+  width: 100%;
+}
+#shopify-section-{{ section.id }} .faq-item .collapsible-trigger.is-open + .collapsible-content {
+  background: {{ section.settings.active_bg }};
+  border-radius: 0 0 16px 16px;
+  padding: 16px 22px 18px;
+}
+#shopify-section-{{ section.id }} .faq-item .collapsible-trigger.is-open + .collapsible-content .collapsible-content__inner {
+  color: {{ section.settings.active_text }};
+}
+/* Non-active */
+#shopify-section-{{ section.id }} .faq-item .collapsible-trigger {
+  background: none;
+  color: {{ section.settings.question_color }};
+}
+#shopify-section-{{ section.id }} .collapsible-trigger span {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  #shopify-section-{{ section.id }} .faq-wrapper {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+}
+{% endstyle %}
+
+<div class="page-width">
+
+  <div class="faq-wrapper">
+
+    <!-- LEFT -->
+    <div class="faq-left">
+      {%- if section.settings.pretitle != blank -%}
+        <div class="section-header__pretitle">
+          {%- if section.settings.pretitle_icon != blank -%}
+            <img
+              class="section-header__pretitle-icon"
+              src="{{ section.settings.pretitle_icon | image_url: width: 48 }}"
+              alt=""
+              loading="lazy"
+              width="30"
+              height="30">
+          {%- endif -%}
+          <span>{{ section.settings.pretitle }}</span>
+        </div>
+      {%- endif -%}
+
+      {%- if section.settings.title != blank -%}
+        <h2 class="section-header__title">
+          {{ section.settings.title }}
+        </h2>
+      {%- endif -%}
+
+      {%- if section.settings.button_label != blank and section.settings.button_link != blank -%}
+        <a href="{{ section.settings.button_link }}" class="btn">
+          {{ section.settings.button_label }}
+        </a>
+      {%- endif -%}
+    </div>
+
+    <!-- RIGHT -->
+    <div class="faq-right">
+
+      {%- if section.blocks.size > 0 -%}
+
+        <!-- FAQ Schema -->
+        <script type="application/ld+json">
+        {
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          "mainEntity": [
+            {%- assign faq_items = section.blocks | where: "type", "question" -%}
+            {%- for block in faq_items -%}
+              {
+                "@type": "Question",
+                "name": {{ block.settings.title | json }},
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": {{ block.settings.text | json }}
+                }
+              }{%- unless forloop.last -%},{%- endunless -%}
+            {%- endfor -%}
+          ]
+        }
+        </script>
+
+        {%- assign faq_items = section.blocks | where: "type", "question" -%}
+        {%- for block in faq_items -%}
+          {%- assign is_active = false -%}
+          {%- if forloop.first and section.settings.open_first -%}
+            {%- assign is_active = true -%}
+          {%- endif -%}
+
+          <div class="faq-item" {{ block.shopify_attributes }}>
+            <button
+              type="button"
+              class="collapsible-trigger collapsible-trigger--inline collapsible--auto-height text-left"
+              aria-controls="FAQ-content-{{ block.id }}"
+              aria-expanded="{% if is_active %}true{% else %}false{% endif %}">
+              {%- render 'collapsible-icons-alt', no_circle: true -%}
+              <span>{{ block.settings.title }}</span>
+            </button>
+
+            <div
+              id="FAQ-content-{{ block.id }}"
+              class="collapsible-content collapsible-content--all"
+              {% if is_active %}style="display:block"{% endif %}>
+              <div class="collapsible-content__inner collapsible-content__inner--faq rte">
+                {{ block.settings.text }}
+              </div>
+            </div>
+          </div>
+        {%- endfor -%}
+
+      {%- endif -%}
+
+    </div>
+
+  </div>
+</div>
+
+{%- if section.settings.divider -%}</div>{%- endif -%}
+
+{% schema %}
+{
+  "name": "Custom FAQ",
+  "settings": [
+    { "type": "text", "id": "pretitle", "label": "Pre-title", "default": "FAQ’s" },
+    { "type": "image_picker", "id": "pretitle_icon", "label": "Pre-title icon" },
+
+    { "type": "text", "id": "title", "label": "Title", "default": "Garden Edging FAQs" },
+
+    { "type": "text", "id": "button_label", "label": "Button label", "default": "MORE FAQ'S" },
+    { "type": "url", "id": "button_link", "label": "Button link" },
+
+    { "type": "checkbox", "id": "open_first", "label": "Open first question", "default": true },
+
+    { "type": "header", "content": "Colors" },
+    { "type": "color", "id": "question_color", "label": "Question color", "default": "#2b2b2b" },
+    { "type": "color", "id": "active_bg", "label": "Active background", "default": "#0b6a2b" },
+    { "type": "color", "id": "active_text", "label": "Active text", "default": "#ffffff" },
+
+    { "type": "checkbox", "id": "divider", "label": "Divider", "default": false }
+  ],
+  "blocks": [
+    {
+      "type": "question",
+      "name": "Question",
+      "settings": [
+        { "type": "text", "id": "title", "label": "Question" },
+        { "type": "richtext", "id": "text", "label": "Answer" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom FAQ",
+      "blocks": [
+        { "type": "question" },
+        { "type": "question" }
+      ]
+    }
+  ],
+  "disabled_on": {
+    "groups": ["header", "footer", "custom.popups"]
+  }
+}
+{% endschema %}
