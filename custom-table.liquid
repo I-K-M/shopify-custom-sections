@@ -1,0 +1,438 @@
+{% comment %}
+  Section: Custom Table
+  File: sections/custom-table.liquid
+{% endcomment %}
+
+<section class="custom-table custom-table-{{ section.id }}">
+    <div class="page-width">
+      {%- if section.settings.title != blank -%}
+        <div class="custom-table__header">
+          <h2 class="custom-table__title">{{ section.settings.title }}</h2>
+        </div>
+      {%- endif -%}
+  
+      <div class="custom-table__wrap">
+        <div class="custom-table__table" role="table" aria-label="{{ section.settings.title | escape }}">
+          <div class="custom-table__row custom-table__row--head" role="row">
+            <div class="custom-table__cell custom-table__cell--head custom-table__cell--feature" role="columnheader">
+              <span class="custom-table__pill">{{ section.settings.feature_heading }}</span>
+            </div>
+  
+            <div class="custom-table__cell custom-table__cell--head" role="columnheader">
+              <span class="custom-table__pill">{{ section.settings.col_1_heading }}</span>
+            </div>
+  
+            <div class="custom-table__cell custom-table__cell--head" role="columnheader">
+              <span class="custom-table__pill">{{ section.settings.col_2_heading }}</span>
+            </div>
+          </div>
+  
+          {%- for block in section.blocks -%}
+            {%- liquid
+              assign row_classes = 'custom-table__row'
+              if block.settings.highlight_row
+                assign row_classes = row_classes | append: ' custom-table__row--highlight'
+              endif
+              if block.settings.is_last_row
+                assign row_classes = row_classes | append: ' custom-table__row--last'
+              endif
+            -%}
+  
+            <div class="{{ row_classes }}" role="row" {{ block.shopify_attributes }}>
+              <div class="custom-table__cell custom-table__cell--feature" role="rowheader">
+                <span class="custom-table__feature">{{ block.settings.feature }}</span>
+              </div>
+  
+              <div class="custom-table__cell" role="cell">
+                <div class="custom-table__value">{{ block.settings.col_1_text }}</div>
+              </div>
+  
+              <div class="custom-table__cell" role="cell">
+                <div class="custom-table__value">{{ block.settings.col_2_text }}</div>
+              </div>
+            </div>
+          {%- endfor -%}
+        </div>
+      </div>
+  
+      {%- if section.settings.note != blank -%}
+        <div class="custom-table__note rte">{{ section.settings.note }}</div>
+      {%- endif -%}
+    </div>
+  </section>
+  
+  <style>
+    .custom-table-{{ section.id }}{
+      padding: {{ section.settings.padding_y }}px 0;
+    }
+  
+    .custom-table-{{ section.id }} .custom-table__title{
+      margin: 0 0 18px 0;
+      text-align: {{ section.settings.title_align }};
+    }
+  
+    .custom-table-{{ section.id }} .custom-table__wrap{
+      display: block;
+    }
+  
+    .custom-table-{{ section.id }} .custom-table__table{
+      border: 1px solid {{ section.settings.border_color }};
+      border-radius: {{ section.settings.radius }}px;
+      overflow: hidden;
+      background: {{ section.settings.table_bg }};
+    }
+  
+    .custom-table-{{ section.id }} .custom-table__row{
+      display: grid;
+      grid-template-columns: 1.15fr 1.45fr 1.45fr;
+      align-items: stretch;
+    }
+  
+    .custom-table-{{ section.id }} .custom-table__row + .custom-table__row{
+      border-top: 1px solid {{ section.settings.border_color }};
+    }
+  
+    .custom-table-{{ section.id }} .custom-table__cell{
+      padding: {{ section.settings.cell_padding_y }}px {{ section.settings.cell_padding_x }}px;
+      text-align: center;
+      color: {{ section.settings.text_color }};
+      font-size: {{ section.settings.font_size }}px;
+      line-height: 1.25;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  
+    .custom-table-{{ section.id }} .custom-table__cell + .custom-table__cell{
+      border-left: 1px solid {{ section.settings.border_color }};
+    }
+  
+    .custom-table-{{ section.id }} .custom-table__cell--feature{
+      justify-content: flex-start;
+      text-align: left;
+      font-weight: 700;
+      color: {{ section.settings.feature_color }};
+    }
+  
+    .custom-table-{{ section.id }} .custom-table__row--head .custom-table__cell{
+      background: {{ section.settings.head_bg }};
+      border-top: none;
+      padding: {{ section.settings.head_padding_y }}px {{ section.settings.head_padding_x }}px;
+    }
+  
+    .custom-table-{{ section.id }} .custom-table__pill{
+      background: {{ section.settings.pill_bg }};
+      color: {{ section.settings.pill_text }};
+      border-radius: 15px;
+      padding: 10px 18px;
+      display: inline-block;
+      font-weight: 700;
+      font-size: {{ section.settings.pill_font_size }}px;
+      line-height: 1;
+      white-space: nowrap;
+    }
+  
+    .custom-table-{{ section.id }} .custom-table__row--highlight{
+      background: {{ section.settings.highlight_bg }};
+    }
+  
+    .custom-table-{{ section.id }} .custom-table__row--last{
+      background: {{ section.settings.last_row_bg }};
+    }
+  
+    /* optional subtle texture on last row */
+    .custom-table-{{ section.id }} .custom-table__row--last{
+      background-image:
+        radial-gradient(rgba(0,0,0,0.04) 1px, transparent 1px);
+      background-size: 6px 6px;
+      background-position: 0 0;
+    }
+  
+    .custom-table-{{ section.id }} .custom-table__value{
+      font-weight: 500;
+    }
+  
+    .custom-table-{{ section.id }} .custom-table__note{
+      margin-top: 18px;
+      text-align: center;
+      color: {{ section.settings.note_color }};
+      font-size: {{ section.settings.note_font_size }}px;
+    }
+    .custom-table-{{ section.id }} .custom-table__note p{ margin: 0; }
+  
+    @media (max-width: 900px){
+      .custom-table-{{ section.id }} .custom-table__row{
+        grid-template-columns: 1fr 1fr 1fr;
+      }
+      .custom-table-{{ section.id }} .custom-table__pill{
+        font-size: 12px;
+        padding: 9px 12px;
+      }
+    }
+  
+    @media (max-width: 700px){
+      .custom-table-{{ section.id }} .custom-table__table{
+        overflow-x: auto;
+      }
+      .custom-table-{{ section.id }} .custom-table__row{
+        min-width: 720px;
+      }
+    }
+  </style>
+  
+  {% schema %}
+  {
+    "name": "Custom Table",
+    "class": "index-section",
+    "settings": [
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Title",
+        "default": "title"
+      },
+      {
+        "type": "select",
+        "id": "title_align",
+        "label": "Title alignment",
+        "default": "center",
+        "options": [
+          { "value": "left", "label": "Left" },
+          { "value": "center", "label": "Center" },
+          { "value": "right", "label": "Right" }
+        ]
+      },
+  
+      { "type": "header", "content": "Headings" },
+      {
+        "type": "text",
+        "id": "feature_heading",
+        "label": "Feature heading",
+        "default": "Feature"
+      },
+      {
+        "type": "text",
+        "id": "col_1_heading",
+        "label": "Column 1 heading",
+        "default": "Warranty Info"
+      },
+      {
+        "type": "text",
+        "id": "col_2_heading",
+        "label": "Column 2 heading",
+        "default": "A Great Product"
+      },
+  
+      { "type": "header", "content": "Colours" },
+      {
+        "type": "color",
+        "id": "table_bg",
+        "label": "Table background",
+        "default": "#ffffff"
+      },
+      {
+        "type": "color",
+        "id": "head_bg",
+        "label": "Header row background",
+        "default": "#ffffff"
+      },
+      {
+        "type": "color",
+        "id": "pill_bg",
+        "label": "Header pill background",
+        "default": "#0C6B2A"
+      },
+      {
+        "type": "color",
+        "id": "pill_text",
+        "label": "Header pill text",
+        "default": "#ffffff"
+      },
+      {
+        "type": "color",
+        "id": "border_color",
+        "label": "Border colour",
+        "default": "#CFCFCF"
+      },
+      {
+        "type": "color",
+        "id": "text_color",
+        "label": "Body text colour",
+        "default": "#4A4A4A"
+      },
+      {
+        "type": "color",
+        "id": "feature_color",
+        "label": "Feature text colour",
+        "default": "#4A4A4A"
+      },
+      {
+        "type": "color",
+        "id": "highlight_bg",
+        "label": "Highlight row background",
+        "default": "#EAF7ED"
+      },
+      {
+        "type": "color",
+        "id": "last_row_bg",
+        "label": "Last row background",
+        "default": "#EAF7ED"
+      },
+  
+      { "type": "header", "content": "Sizing" },
+      {
+        "type": "range",
+        "id": "radius",
+        "label": "Corner radius",
+        "min": 0,
+        "max": 40,
+        "step": 2,
+        "unit": "px",
+        "default": 18
+      },
+      {
+        "type": "range",
+        "id": "padding_y",
+        "label": "Section vertical padding",
+        "min": 0,
+        "max": 120,
+        "step": 8,
+        "unit": "px",
+        "default": 48
+      },
+      {
+        "type": "range",
+        "id": "cell_padding_y",
+        "label": "Cell padding Y",
+        "min": 8,
+        "max": 40,
+        "step": 2,
+        "unit": "px",
+        "default": 18
+      },
+      {
+        "type": "range",
+        "id": "cell_padding_x",
+        "label": "Cell padding X",
+        "min": 10,
+        "max": 60,
+        "step": 2,
+        "unit": "px",
+        "default": 22
+      },
+      {
+        "type": "range",
+        "id": "head_padding_y",
+        "label": "Header row padding Y",
+        "min": 8,
+        "max": 40,
+        "step": 2,
+        "unit": "px",
+        "default": 18
+      },
+      {
+        "type": "range",
+        "id": "head_padding_x",
+        "label": "Header row padding X",
+        "min": 10,
+        "max": 60,
+        "step": 2,
+        "unit": "px",
+        "default": 22
+      },
+      {
+        "type": "range",
+        "id": "font_size",
+        "label": "Body font size",
+        "min": 12,
+        "max": 20,
+        "step": 1,
+        "unit": "px",
+        "default": 14
+      },
+      {
+        "type": "range",
+        "id": "pill_font_size",
+        "label": "Pill font size",
+        "min": 11,
+        "max": 18,
+        "step": 1,
+        "unit": "px",
+        "default": 13
+      },
+  
+      { "type": "header", "content": "Bottom note" },
+      {
+        "type": "richtext",
+        "id": "note",
+        "label": "Note text",
+        "default": "<p>Both materials offer a long service life and are well suited to gardens.</p>"
+      },
+      {
+        "type": "color",
+        "id": "note_color",
+        "label": "Note text colour",
+        "default": "#8A8A8A"
+      },
+      {
+        "type": "range",
+        "id": "note_font_size",
+        "label": "Note font size",
+        "min": 12,
+        "max": 20,
+        "step": 1,
+        "unit": "px",
+        "default": 14
+      }
+    ],
+    "blocks": [
+      {
+        "type": "row",
+        "name": "Row",
+        "settings": [
+          {
+            "type": "text",
+            "id": "feature",
+            "label": "Feature",
+            "default": "Appearance"
+          },
+          {
+            "type": "text",
+            "id": "col_1_text",
+            "label": "Column 1 text",
+            "default": "Natural patina"
+          },
+          {
+            "type": "text",
+            "id": "col_2_text",
+            "label": "Column 2 text",
+            "default": "Clean finish"
+          },
+          {
+            "type": "checkbox",
+            "id": "highlight_row",
+            "label": "Highlight row (light green)",
+            "default": false
+          },
+          {
+            "type": "checkbox",
+            "id": "is_last_row",
+            "label": "Last row (textured green)",
+            "default": false
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "Custom Table",
+        "blocks": [
+          { "type": "row", "settings": { "feature": "Appearance", "col_1_text": "Natural", "col_2_text": "Clean" } },
+          { "type": "row", "settings": { "feature": "Resistance", "col_1_text": "High (self-sealing surface)", "col_2_text": "High", "highlight_row": true } },
+          { "type": "row", "settings": { "feature": "Maintenance", "col_1_text": "Very low", "col_2_text": "Very low" } },
+          { "type": "row", "settings": { "feature": "Typical use", "col_1_text": "Modern landscapes", "col_2_text": "Practical", "is_last_row": true } }
+        ]
+      }
+    ]
+  }
+  {% endschema %}
