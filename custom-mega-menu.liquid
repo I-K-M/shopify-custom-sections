@@ -1,0 +1,174 @@
+{%- comment -%}
+  snippets/custom-mega-menu.liquid
+
+  Expected params:
+  - link: top-level menu link object (e.g. "Shop")
+  - section: header section (for settings like mega_menu_images)
+  - dropdown_alignment: 'left' | 'center' (optional)
+{%- endcomment -%}
+
+{%- liquid
+
+    assign cols = link.links
+  
+    assign shop_all_link = cols | first
+    assign shop_all_url = shop_all_link.url
+    assign shop_all_title = shop_all_link.title
+  
+    assign shop_all_collection = blank
+    if shop_all_link.url contains '/collections/' and shop_all_link.object != blank
+      assign shop_all_collection = collections[shop_all_link.object.handle]
+    endif
+  
+  -%}
+  
+  <style>
+    /* Scoped to this dropdown only */
+    #site-nav-item--{{ index }} .megamenu-custom__layout{
+      display:grid;
+      grid-template-columns: 1fr 3fr;
+      gap:24px;
+      align-items:start;
+    }
+    #site-nav-item--{{ index }} .megamenu-custom__feature{
+      min-width:0;
+    }
+    #site-nav-item--{{ index }} .megamenu-custom__feature-image{
+      display:block;
+      border-radius: 6px;
+      overflow:hidden;
+    }
+    #site-nav-item--{{ index }} .megamenu-custom__feature-content{
+      margin-top:12px;
+    }
+    #site-nav-item--{{ index }} .megamenu-custom__feature-title{
+      font-weight:600;
+      margin-bottom:10px;
+    }
+    #site-nav-item--{{ index }} .megamenu-custom__btn{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:10px 14px;
+      border-radius:6px;
+      text-decoration:none;
+    }
+  
+    #site-nav-item--{{ index }} .megamenu-custom__cols{
+      display:grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap:24px;
+    }
+    #site-nav-item--{{ index }} .megamenu-custom__col{
+      min-width:0;
+    }
+    #site-nav-item--{{ index }} .megamenu-custom__col-title{
+      font-weight:600;
+      padding-bottom:10px;
+      margin-bottom:10px;
+      border-bottom:1px solid rgba(0,0,0,0.12);
+    }
+    #site-nav-item--{{ index }} .megamenu-custom__col-image{
+      margin:10px 0 12px;
+    }
+    #site-nav-item--{{ index }} .megamenu-custom__link{
+      display:block;
+      padding:4px 0;
+      text-decoration:none;
+    }
+  
+    @media (max-width: 1024px){
+      #site-nav-item--{{ index }} .megamenu-custom__layout{
+        grid-template-columns: 1fr;
+      }
+      #site-nav-item--{{ index }} .megamenu-custom__cols{
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+  </style>
+  
+  <div class="site-nav__dropdown megamenu megamenu-custom{% if dropdown_alignment == 'center' %} text-center{% else %} text-left{% endif %}">
+    <div class="page-width">
+      <div class="megamenu-custom__layout">
+  
+        {%- comment -%} LEFT FEATURE {%- endcomment -%}
+        <div class="megamenu-custom__feature">
+          {%- if shop_all_collection != blank and shop_all_collection.image != blank -%}
+              <a class="megamenu-custom__feature-image" href="{{ shop_all_url }}">
+              {%- render 'image-element',
+                  img: shop_all_collection.image,
+                  sizeVariable: '30vw',
+                  alt: shop_all_title
+              -%}
+              </a>
+          {%- endif -%}
+  
+          <div class="megamenu-custom__feature-content">
+              <div class="megamenu-custom__feature-title">{{ shop_all_title }}</div>
+              <a class="btn megamenu-custom__btn" href="{{ shop_all_url }}">
+              Shop All <span aria-hidden="true">→</span>
+              </a>
+          </div>
+          </div>
+  
+        {%- comment -%} RIGHT COLUMNS {%- endcomment -%}
+        <div class="megamenu-custom__cols">
+          {%- for childlink in cols -%}
+          {%- if forloop.first -%}{%- continue -%}{%- endif -%}
+            {%- liquid
+              assign image_collection_handle = blank
+  
+              if childlink.url contains '/collections/' and childlink.object != blank
+                assign image_collection_handle = childlink.object.handle
+              else
+                for grandchildlink in childlink.links
+                  if grandchildlink.url contains '/collections/' and grandchildlink.object != blank
+                    assign image_collection_handle = grandchildlink.object.handle
+                    break
+                  endif
+                endfor
+              endif
+  
+              assign image_collection = blank
+              if image_collection_handle != blank
+                assign image_collection = collections[image_collection_handle]
+              endif
+            -%}
+  
+            <div class="megamenu-custom__col">
+              <div class="megamenu-custom__col-title">
+                <a class="site-nav__dropdown-link site-nav__dropdown-link--top-level" href="{{ childlink.url }}">
+                  {{ childlink.title }}
+                </a>
+              </div>
+  
+              {%- if childlink.links != blank -%}
+                {%- for grandchildlink in childlink.links -%}
+                  <a class="megamenu-custom__link site-nav__dropdown-link" href="{{ grandchildlink.url }}">
+                    {{ grandchildlink.title }}
+                  </a>
+                {%- endfor -%}
+              {%- endif -%}
+  
+              {%- if forloop.index <= 4 and section.settings.mega_menu_images and image_collection != blank and image_collection.image != blank -%}
+                  <div class="megamenu-custom__col-image">
+                      <a href="{{ image_collection.url }}">
+                      <div class="svg-mask svg-mask--landscape">
+                          {%- render 'image-element',
+                          img: image_collection.image,
+                          sizeVariable: '20vw',
+                          alt: image_collection.title,
+                          classes: 'megamenu__collection-image'
+                          -%}
+                      </div>
+                      </a>
+                  </div>
+                  {%- endif -%}
+              
+            </div>
+          {%- endfor -%}
+        </div>
+  
+      </div>
+    </div>
+  </div>
