@@ -1,0 +1,410 @@
+{%- if section.settings.divider -%}<div class="section--divider">{%- endif -%}
+
+{%- style -%}
+  .custom-text-columns-{{ section.id }} {
+    padding: {{ section.settings.section_padding_top }}px 0 {{ section.settings.section_padding_bottom }}px 0;
+    margin-top: {{ section.settings.section_margin_top }}px;
+    margin-bottom: {{ section.settings.section_margin_bottom }}px;
+    text-align: center;
+  }
+  .custom-text-columns-{{ section.id }} .section-header__text {
+    margin: 10px auto 0;
+    max-width: 820px;
+    padding-bottom: 40px;
+    font-size:16px;
+  }
+  .custom-text-columns-{{ section.id }} .section-header__text p {
+    margin: 0;
+  }
+  .custom-text-columns-{{ section.id }} .text-columns__bottom {
+    position: relative;
+    overflow: hidden;
+    border-radius: 12px;
+    margin-top:-4rem;
+  }
+  .custom-text-columns-{{ section.id }} .text-column__grid {
+    padding-bottom: 40px;
+  }
+  .custom-text-columns-{{ section.id }} .text-column__grid .image-wrap {
+    background-color: transparent;
+  }
+  .custom-text-columns-{{ section.id }} .text-columns__bottom-bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    opacity: {{ section.settings.bottom_bg_opacity | divided_by: 100.0 }};
+  }
+
+  .custom-text-columns-{{ section.id }} .text-columns__bottom-content {
+    position: relative;
+    z-index: 1;
+    padding: {{ section.settings.bottom_padding }}px;
+    text-align:left;
+    min-height: {{ section.settings.bottom_bg_height }}px;
+  }
+  .custom-text-columns-{{ section.id }} h3 {
+    font-size:28px;
+  }
+  .custom-text-columns-{{ section.id }} .text-columns__stack{
+    width: 100%;
+  }
+  .custom-text-columns-{{ section.id }} .text-columns__bottom{
+    width: 100%;
+  }
+  .custom-text-columns-{{ section.id }} .disclaimer {
+    color:#fff;
+    text-align:center;
+    padding-top:40px;
+  }
+{%- endstyle -%}
+
+<div
+  class="custom-text-columns-section custom-text-columns-section-{{ section.id }}"
+  {% if section.settings.section_bg_image != blank %}
+    style="
+      background-image: url({{ section.settings.section_bg_image | image_url: width: 2400 }});
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+    "
+  {% endif %}
+>
+  <div class="page-width custom-text-columns custom-text-columns-{{ section.id }}">
+    {%- if section.settings.pretitle != blank -%}
+          <div class="section-header__pretitle">
+            {%- if section.settings.pretitle_icon != blank -%}
+              <img
+                class="section-header__pretitle-icon"
+                src="{{ section.settings.pretitle_icon | image_url: width: 48 }}"
+                alt=""
+                loading="lazy"
+                width="30"
+                height="30">
+            {%- endif -%}
+            <span>{{ section.settings.pretitle }}</span>
+          </div>
+        {%- endif -%}
+
+  {%- if section.settings.title != blank -%}
+    <div class="section-header text-{{ section.settings.align_text }}">
+      <h2>{{ section.settings.title }}</h2>
+    </div>
+  {%- endif -%}
+
+  {%- if section.settings.subtitle_richtext != blank -%}
+    <div class="section-header__text rte-setting">
+      {{ section.settings.subtitle_richtext }}
+    </div>
+  {%- endif -%}
+
+  <div class="text-column__grid">
+    {%- for block in section.blocks -%}
+      <div class="text-{{ section.settings.align_text }}" {{ block.shopify_attributes }} data-aos="row-of-3">
+        {%- liquid
+  assign wrap_style = ''
+  if section.settings.align_text == 'center'
+    assign wrap_style = 'margin: 0 auto;'
+  endif
+  assign wrap_style = wrap_style | append: 'max-width: ' | append: block.settings.image_width | append: 'px;'
+-%}
+
+<div class="text-columns__stack" style="{{ wrap_style }}">
+  {%- if block.settings.enable_image -%}
+    {%- if block.settings.button_link != blank -%}
+      <a href="{{ block.settings.button_link }}">
+    {%- endif -%}
+
+    {%- if block.settings.image != blank -%}
+      <div class="image-wrap text-spacing {% if block.settings.image_mask != 'none' %}svg-mask svg-mask--{{ block.settings.image_mask }}{% endif %}"
+           style="height: 0; padding-bottom: {{ 100 | divided_by: block.settings.image.aspect_ratio }}%;">
+        {%- render 'image-element',
+          img: block.settings.image,
+          sizeVariable: column_width,
+          widths: '180, 360, 540, 720, 900, 1080'
+        -%}
+      </div>
+    {%- else -%}
+      <div class="image-wrap text-spacing {% if block.settings.image_mask != 'none' %}svg-mask svg-mask--{{ block.settings.image_mask }}{% endif %}">
+        {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+      </div>
+    {%- endif -%}
+
+    {%- if block.settings.button_link != blank -%}
+      </a>
+    {%- endif -%}
+  {%- endif -%}
+
+  <div class="text-columns__bottom">
+    <div
+      class="text-columns__bottom-bg"
+      {% if block.settings.bottom_bg_image != blank %}
+        style="background-image:url({{ block.settings.bottom_bg_image | image_url: width: 1200 }});"
+      {% endif %}
+    ></div>
+
+    <div class="text-columns__bottom-content">
+      {%- if block.settings.title != blank -%}
+        <h3>{{ block.settings.title }}</h3>
+      {%- endif -%}
+
+      {%- if block.settings.text != blank -%}
+        <div class="rte-setting text-spacing">{{ block.settings.text }}</div>
+      {%- endif -%}
+
+      {%- if block.settings.button_label != blank -%}
+        <a href="{{ block.settings.button_link }}" class="btn btn--secondary btn--small">
+          {{ block.settings.button_label }}
+        </a>
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+
+      </div>
+    {%- endfor -%}
+  </div>
+      {%- if section.settings.disclaimer != blank -%}
+        <span class="disclaimer">{{ section.settings.disclaimer }}</span>
+      {%- endif -%}
+</div>
+</div>
+
+{%- if section.settings.divider -%}</div>{%- endif -%}
+
+{% schema %}
+{
+  "name": "Custom Text Columns",
+  "class": "index-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Section background"
+    },
+    {
+      "type": "image_picker",
+      "id": "section_bg_image",
+      "label": "Background image (cover / center)"
+    },
+    {
+      "type": "text",
+      "id": "pretitle",
+      "label": "Pre-title",
+      "default": "Pre-title"
+    },
+    {
+      "type": "image_picker",
+      "id": "pretitle_icon",
+      "label": "Pre-title icon"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "t:sections.text-columns.settings.title.label"
+    },
+    {
+      "type": "richtext",
+      "id": "subtitle_richtext",
+      "label": "Text under title",
+      "default": "<p>Browse our steel garden edging range to find a solution suited to your garden or landscaping project:</p>"
+    },
+    {
+      "type": "text",
+      "id": "disclaimer",
+      "label": "Disclaimer",
+      "default": "Text"
+    },
+    {
+      "type": "select",
+      "id": "align_text",
+      "label": "t:sections.text-columns.settings.align_text.label",
+      "default": "center",
+      "options": [
+        { "value": "left", "label": "t:sections.text-columns.settings.align_text.options.left.label" },
+        { "value": "center", "label": "t:sections.text-columns.settings.align_text.options.center.label" },
+        { "value": "right", "label": "t:sections.text-columns.settings.align_text.options.right.label" }
+      ]
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "section_padding_top",
+      "label": "Section padding top",
+      "min": 0,
+      "max": 160,
+      "step": 8,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "section_padding_bottom",
+      "label": "Section padding bottom",
+      "min": 0,
+      "max": 160,
+      "step": 8,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "section_margin_top",
+      "label": "Section margin top",
+      "min": -160,
+      "max": 160,
+      "step": 8,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "section_margin_bottom",
+      "label": "Section margin bottom",
+      "min": -160,
+      "max": 160,
+      "step": 8,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "bottom_padding",
+      "label": "Bottom content padding",
+      "min": 0,
+      "max": 60,
+      "step": 4,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "bottom_bg_opacity",
+      "label": "Bottom background opacity",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "range",
+      "id": "bottom_bg_height",
+      "label": "Bottom background height",
+      "min": 0,
+      "max": 600,
+      "step": 20,
+      "unit": "px",
+      "default": 260
+    },
+    {
+      "type": "checkbox",
+      "id": "divider",
+      "label": "t:sections.text-columns.settings.divider.label",
+      "default": false
+    }
+  ],
+  "blocks": [
+    {
+      "type": "text_block",
+      "name": "t:sections.text-columns.blocks.column.name",
+      "settings": [
+        {
+          "type": "checkbox",
+          "id": "enable_image",
+          "label": "t:sections.text-columns.blocks.column.settings.enable_image.label",
+          "default": true
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "t:sections.text-columns.blocks.column.settings.image.label"
+        },
+        {
+          "type": "select",
+          "id": "image_mask",
+          "label": "t:common.image_mask.label",
+          "default": "none",
+          "options": [
+            { "value": "none", "label": "t:common.image_mask.options.none.label" },
+            { "value": "portrait", "label": "t:common.image_mask.options.portrait.label" },
+            { "value": "landscape", "label": "t:common.image_mask.options.landscape.label" },
+            { "value": "square", "label": "t:common.image_mask.options.square.label" },
+            { "value": "rounded", "label": "t:common.image_mask.options.rounded.label" },
+            { "value": "rounded-wave", "label": "t:common.image_mask.options.rounded-wave.label" },
+            { "value": "rounded-top", "label": "t:common.image_mask.options.rounded-top.label" },
+            { "value": "star", "label": "t:common.image_mask.options.star.label" },
+            { "value": "splat-1", "label": "t:common.image_mask.options.splat-1.label" },
+            { "value": "splat-2", "label": "t:common.image_mask.options.splat-2.label" },
+            { "value": "splat-3", "label": "t:common.image_mask.options.splat-3.label" },
+            { "value": "splat-4", "label": "t:common.image_mask.options.splat-4.label" }
+          ]
+        },
+        {
+          "type": "range",
+          "id": "image_width",
+          "label": "t:sections.text-columns.blocks.column.settings.image_width.label",
+          "default": 650,
+          "min": 60,
+          "max": 650,
+          "step": 10,
+          "unit": "px"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "t:sections.text-columns.blocks.column.settings.title.label",
+          "default": "Example title"
+        },
+        {
+          "type": "richtext",
+          "id": "subtitle_richtext",
+          "label": "Text under title",
+          "default": "<p>Browse our steel garden edging range to find a solution suited to your garden or landscaping project:</p>"
+        },
+        { "type": "header", "content": "Bottom text background" },
+        {
+          "type": "image_picker",
+          "id": "bottom_bg_image",
+          "label": "Background image (behind text/button)"
+        },
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "t:sections.text-columns.blocks.column.settings.text.label",
+          "default": "<p>Use this section to explain a set of product features, to link to a series of pages, or to answer common questions about your products. Add images for emphasis.</p>"
+        },
+        {
+          "type": "text",
+          "id": "button_label",
+          "label": "t:sections.text-columns.blocks.column.settings.button_label.label",
+          "default": "Optional button"
+        },
+        {
+          "type": "url",
+          "id": "button_link",
+          "label": "t:sections.text-columns.blocks.column.settings.button_link.label"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom Text Columns",
+      "blocks": [
+        { "type": "text_block" },
+        { "type": "text_block" },
+        { "type": "text_block" }
+      ]
+    }
+  ],
+  "disabled_on": {
+    "groups": ["custom.popups"]
+  }
+}
+{% endschema %}
