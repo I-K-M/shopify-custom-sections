@@ -1,0 +1,412 @@
+{%- liquid
+    assign number_of_comments = article.comments_count
+    if comment.status == 'pending'
+      assign number_of_comments = article.comments_count | plus: 1
+    endif
+  
+    assign hero_bg = article.metafields.custom.hero_bg
+  
+    if hero_bg == blank
+      assign hero_bg = article.image
+    endif
+  
+    if section.settings.hero_bg_image != blank
+      assign hero_bg = section.settings.hero_bg_image
+    endif
+  
+    assign left_paragraph = article.metafields.custom.left_paragraph
+    if left_paragraph == blank
+      assign left_paragraph = article.excerpt
+    endif
+  
+    assign left_image = article.metafields.custom.left_image
+    if left_image == blank and section.settings.left_image_override != blank
+      assign left_image = section.settings.left_image_override
+    endif
+  
+    assign author_name = article.metafields.custom.author_name
+    assign author_photo = article.metafields.custom.author_photo
+    assign author_bio = article.metafields.custom.author_bio
+  -%}
+  
+  {%- if section.settings.enable_custom_hero and hero_bg -%}
+    <section class="td-article-hero">
+      <div
+        class="td-article-hero__bg"
+        style="background-image:url({{ hero_bg | image_url: width: 2400 }});"
+      ></div>
+  
+      <div class="td-article-hero__overlay">
+        <div class="page-width">
+          {%- render 'breadcrumbs' -%}
+  
+          {%- if section.settings.blog_show_date or article.tags.size > 0 or article.comments_count > 0 -%}
+            <div class="td-article-meta">
+              {%- if section.settings.blog_show_tags and article.tags.size > 0 -%}
+                {%- for tag in article.tags -%}
+                  {% if tag contains "_" %}{%- assign tag_starts_with = tag | slice: 0 -%}{% if tag_starts_with == "_" %}{% continue %}{% endif %}{% endif %}
+                  <a href="{{ blog.url }}/tagged/{{ tag | handle }}">{{ tag }}</a>
+                  {%- unless forloop.last -%}<span class="td-dot">·</span>{%- endunless -%}
+                {%- endfor -%}
+                <span class="td-dot">·</span>
+              {%- endif -%}
+  
+              {%- if section.settings.blog_show_comments and article.comments_count > 0 -%}
+                <a href="#comments">{{ 'blogs.comments.with_count' | t: count: number_of_comments }}</a>
+                <span class="td-dot">·</span>
+              {%- endif -%}
+  
+              {%- if section.settings.blog_show_date -%}
+                {{ article.published_at | time_tag: format: 'month_day_year' }}
+              {%- endif -%}
+            </div>
+          {%- endif -%}
+  
+          <h1 class="td-article-hero__title">{{ article.title }}</h1>
+  
+          {%- if section.settings.blog_show_author and article.author != blank -%}
+            <div class="td-article-hero__author">by {{ article.author }}</div>
+          {%- endif -%}
+        </div>
+      </div>
+    </section>
+  {%- endif -%}
+  
+  <div class="page-width page-content td-article-wrap">
+    <article class="article td-article">
+  
+      {%- unless section.settings.enable_custom_hero and hero_bg -%}
+        {%- render 'breadcrumbs' -%}
+  
+        <header class="section-header">
+          {%- if section.settings.blog_show_date or article.tags.size > 0 or article.comments_count > 0 -%}
+            <div class="article__date">
+              {%- if section.settings.blog_show_tags and article.tags.size > 0 -%}
+                {%- for tag in article.tags -%}
+                  {% if tag contains "_" %}{%- assign tag_starts_with = tag | slice: 0 -%}{% if tag_starts_with == "_" %}{% continue %}{% endif %}{% endif %}
+                  <a href="{{ blog.url }}/tagged/{{ tag | handle }}">{{ tag }}</a> &middot;
+                {%- endfor -%}
+              {%- endif -%}
+              {%- if section.settings.blog_show_comments and article.comments_count > 0 -%}
+                <a href="#comments">{{ 'blogs.comments.with_count' | t: count: number_of_comments }}</a> &middot;
+              {%- endif -%}
+              {%- if section.settings.blog_show_date -%}
+                {{ article.published_at | time_tag: format: 'month_day_year' }}
+              {%- endif -%}
+            </div>
+          {%- endif -%}
+  
+          <h1 class="section-header__title">{{ article.title }}</h1>
+  
+          {%- if section.settings.blog_show_author -%}
+            <div class="article__author">by {{ article.author }}</div>
+          {%- endif -%}
+        </header>
+      {%- endunless -%}
+  
+      <div class="td-article-layout">
+        <aside class="td-article-left">
+          {%- if left_paragraph != blank -%}
+            <div class="td-article-left__intro rte">
+              {{ left_paragraph | metafield_tag }}
+            </div>
+          {%- endif -%}
+  
+          {%- if left_image != blank -%}
+            <div class="td-article-left__imgWrap">
+              <div class="td-article-left__img">
+                <img
+                  src="{{ left_image | image_url: width: 1200 }}"
+                  alt="{{ left_image.alt | escape }}"
+                  loading="lazy"
+                  width="{{ left_image.width }}"
+                  height="{{ left_image.height }}"
+                >
+              </div>
+            </div>
+          {%- endif -%}
+        </aside>
+  
+        <section class="td-article-right">
+          <div class="td-article-body rte">
+            {{ article.content }}
+          </div>
+        </section>
+      </div>
+  
+      {%- if author_name != blank -%}
+        <section class="td-author">
+          {%- if author_photo != blank -%}
+            <div class="td-author__photo">
+              <img
+                src="{{ author_photo | image_url: width: 400 }}"
+                alt="{{ author_name | escape }}"
+                loading="lazy"
+                width="{{ author_photo.width }}"
+                height="{{ author_photo.height }}"
+              >
+            </div>
+          {%- endif -%}
+  
+          <div class="td-author__content">
+            <div class="td-author__name">{{ author_name }}</div>
+            {%- if author_bio != blank -%}
+              <div class="td-author__bio rte">{{ author_bio | metafield_tag }}</div>
+            {%- endif -%}
+          </div>
+        </section>
+      {%- endif -%}
+  
+      {%- if section.settings.social_sharing_blog -%}
+        {%- render 'social-sharing', share_title: article.title, share_permalink: article.url, share_image: article.image -%}
+      {%- endif -%}
+  
+      {%- if blog.comments_enabled? -%}
+        {%- if number_of_comments > 0 -%}
+          <hr class="hr--large">
+          <h3>{{ 'blogs.comments.with_count' | t: count: number_of_comments }}</h3>
+          <hr class="hr--small hr--clear">
+        {%- endif -%}
+  
+        {%- paginate article.comments by 5 -%}
+          <div id="comments">
+            {%- if comment and comment.errors == blank -%}
+              <hr class="hr--small hr--clear">
+              <p class="note note--success">
+                {%- if blog.moderated? -%}
+                  {{ 'blogs.comments.success_moderated' | t }}
+                {%- else -%}
+                  {{ 'blogs.comments.success' | t }}
+                {%- endif -%}
+              </p>
+            {%- endif -%}
+  
+            {%- if number_of_comments > 0 -%}
+              <ul class="no-bullets">
+                {%- if comment.status == 'pending' -%}
+                  <li id="Comment-{{ comment.id }}" class="article__comment">
+                    {%- render 'comment', comment: comment -%}
+                  </li>
+                {%- endif -%}
+  
+                {%- for comment in article.comments -%}
+                  <li id="Comment-{{ comment.id }}" class="article__comment">
+                    {%- render 'comment', comment: comment -%}
+                  </li>
+                  {%- unless forloop.last -%}
+                    <li><hr class="hr--clear"></li>
+                  {%- endunless -%}
+                {%- endfor -%}
+              </ul>
+  
+              {%- if paginate.pages > 1 -%}
+                {%- render 'pagination', paginate: paginate, hash: '#comments' -%}
+              {%- endif -%}
+            {%- endif -%}
+  
+            <hr class="hr--large">
+  
+            <header class="section-header{% unless settings.type_headers_align_text %} section-header--with-link{% endunless %}">
+              <h3 class="section-header__title">{{ 'blogs.comments.title' | t }}</h3>
+            </header>
+  
+            <div class="form-vertical">
+              {%- form 'new_comment', article -%}
+                {{ form.errors | default_errors }}
+  
+                <div class="grid grid--small">
+                  <div class="grid__item medium-up--one-half">
+                    <label for="CommentAuthor">{{ 'blogs.comments.name' | t }}</label>
+                    <input required class="input-full{% if form.errors contains 'author' %} error{% endif %}" type="text" name="comment[author]" id="CommentAuthor" value="{{ form.author }}" autocapitalize="words">
+                  </div>
+                  <div class="grid__item medium-up--one-half">
+                    <label for="CommentEmail">{{ 'blogs.comments.email' | t }}</label>
+                    <input required class="input-full{% if form.errors contains 'email' %} error{% endif %}" type="email" name="comment[email]" id="CommentEmail" value="{{ form.email }}" autocorrect="off" autocapitalize="off">
+                  </div>
+                </div>
+  
+                <label for="CommentBody">{{ 'blogs.comments.message' | t }}</label>
+                <textarea required class="input-full{% if form.errors contains 'body' %} error{% endif %}" name="comment[body]" id="CommentBody">{{ form.body }}</textarea>
+  
+                {%- if blog.moderated? -%}
+                  <p><small>{{ 'blogs.comments.moderated' | t }}</small></p>
+                {%- endif -%}
+  
+                <button type="submit" class="btn btn--secondary">
+                  {{ 'blogs.comments.post' | t }}
+                </button>
+  
+                {{ 'shopify.online_store.spam_detection.disclaimer_html' | t }}
+              {%- endform -%}
+            </div>
+          </div>
+        {%- endpaginate -%}
+      {%- endif -%}
+  
+      <hr class="hr--large">
+    </article>
+  
+    <div class="text-center">
+      <a href="{{ blog.url }}" class="btn return-link">
+        <svg aria-hidden="true" focusable="false" role="presentation" class="icon icon--wide icon-arrow-left" viewBox="0 0 50 15">
+          <title>icon-left-arrow</title>
+          <path d="M50 5.38v4.25H15V15L0 7.5 15 0v5.38Z"/>
+        </svg>
+        {{ 'blogs.article.back_to_blog' | t: title: blog.title }}
+      </a>
+    </div>
+  </div>
+  
+  <style>
+    .td-article-wrap { padding-top: 24px; }
+  
+    .td-article-hero { position: relative; min-height: 340px; }
+    .td-article-hero__bg {
+      position: absolute; inset: 0;
+      background-size: cover; background-position: center;
+    }
+    .td-article-hero__overlay {
+      position: relative;
+      padding: 72px 0 56px;
+      color: #fff;
+    }
+    .td-article-hero__title { margin: 12px 0 0; max-width: 780px; }
+    .td-article-hero__author, .td-article-meta { opacity: .95; }
+    .td-article-meta a { color: inherit; text-decoration: underline; }
+    .td-dot { margin: 0 8px; }
+  
+    .td-article-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px;
+      align-items: start;
+      margin-top: 28px;
+    }
+  
+    .td-article-left__intro { margin-bottom: 18px; }
+  
+    .td-article-left__imgWrap { position: relative; }
+    .td-article-left__img {
+      width: 100%;
+      transform: translateX(-40px);
+      overflow: hidden;
+    }
+    .td-article-left__img img { width: 100%; height: auto; display: block; }
+  
+    .td-author {
+      display: grid;
+      grid-template-columns: 84px 1fr;
+      gap: 18px;
+      align-items: start;
+      margin: 42px 0;
+      padding: 18px;
+      border: 1px solid rgba(0,0,0,.08);
+      border-radius: 14px;
+      background: rgba(0,0,0,.02);
+    }
+    .td-author__photo img {
+      width: 84px; height: 84px;
+      object-fit: cover;
+      border-radius: 999px;
+      display: block;
+    }
+    .td-author__name { font-weight: 700; margin-bottom: 6px; }
+  
+    @media (max-width: 989px) {
+      .td-article-hero__overlay { padding: 56px 0 40px; }
+      .td-article-layout { grid-template-columns: 1fr; gap: 28px; }
+      .td-article-left__img { width: 100%; transform: none; }
+      .td-author { grid-template-columns: 64px 1fr; }
+      .td-author__photo img { width: 64px; height: 64px; }
+    }
+  </style>
+  
+  <script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "Article",
+    "articleBody": {{ article.content | strip_html | json }},
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": {{ shop.url | append: article.url | json }}
+    },
+    "headline": {{ article.title | json }},
+    {% if article.excerpt != blank %}
+      "description": {{ article.excerpt | strip_html | json }},
+    {% endif %}
+    {% if article.image %}
+      {% assign image_size = article.image.width | append: 'x' %}
+      "image": [
+        {{ article | img_url: image_size | prepend: "https:" | json }}
+      ],
+    {% endif %}
+    "datePublished": {{ article.published_at | date: '%Y-%m-%dT%H:%M:%SZ' | json }},
+    "dateModified": {{ article.updated_at | date: '%Y-%m-%dT%H:%M:%SZ' | json }},
+    "dateCreated": {{ article.created_at | date: '%Y-%m-%dT%H:%M:%SZ' | json }},
+    "author": {
+      "@type": "Person",
+      "name": {{ article.author | json }}
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": {{ shop.name | json }}
+    }
+  }
+  </script>
+  
+  {% schema %}
+  {
+    "name": "Article template (custom)",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "enable_custom_hero",
+        "label": "Enable hero background under title",
+        "default": true
+      },
+      {
+        "type": "image_picker",
+        "id": "hero_bg_image",
+        "label": "Hero background override (optional)"
+      },
+      {
+        "type": "image_picker",
+        "id": "left_image_override",
+        "label": "Left image override (optional)"
+      },
+      {
+        "type": "checkbox",
+        "id": "blog_show_tags",
+        "label": "Show tags",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "blog_show_date",
+        "label": "Show date",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "blog_show_comments",
+        "label": "Show comments",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "blog_show_author",
+        "label": "Show Shopify author (header)",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "social_sharing_blog",
+        "label": "Enable social sharing",
+        "default": true
+      }
+    ],
+    "disabled_on": {
+      "groups": ["footer", "header", "custom.popups"]
+    }
+  }
+  {% endschema %}
