@@ -1,0 +1,186 @@
+{% style %}
+  .contact-form {
+    padding-bottom:0;
+    margin-bottom:0;
+  }
+  .contact-form input, .contact-form textarea {
+    background-color: #fff;
+    border-radius: 10px;
+    border: none;
+    height:50px;
+  }
+{% endstyle %}
+
+<div class="index-section contact-form" 
+  {% if section.settings.section_bg_image != blank %}
+    style="
+      background-image: url({{ section.settings.section_bg_image | image_url: width: 2400 }});
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+    "
+  {% endif %}
+>
+  <div class="page-width{% if section.settings.narrow_column %} page-width--narrow{% endif %}"
+  style="background-color:#F6F2E5;padding:2rem 2rem 6rem 2rem;border-radius:20px 20px 0 0;">
+
+    {%- if section.settings.pretitle != blank -%}
+          <div class="section-header__pretitle">
+            {%- if section.settings.pretitle_icon != blank -%}
+              <img
+                class="section-header__pretitle-icon"
+                src="{{ section.settings.pretitle_icon | image_url: width: 48 }}"
+                alt=""
+                loading="lazy"
+                width="30"
+                height="30">
+            {%- endif -%}
+            <span>{{ section.settings.pretitle }}</span>
+          </div>
+        {%- endif -%}
+
+    {%- if section.settings.title != blank -%}
+      <div class="section-header">
+        <h2 class="section-header__title">
+          {{ section.settings.title }}
+        </h2>
+        {%- if section.settings.text != blank -%}
+          <div class="rte section-header__rte">{{ section.settings.text }}</div>
+        {%- endif -%}
+      </div>
+    {% endif %}
+
+    <div class="form-vertical">
+      {%- assign form_id = 'contact-' | append: section.id -%}
+      {%- form 'contact', id: form_id -%}
+
+        {%- if form.posted_successfully? -%}
+          <p class="note note--success">
+            {{ 'contact.form.post_success' | t }}
+          </p>
+        {%- endif -%}
+
+        {{ form.errors | default_errors }}
+
+    <div class="grid grid--small">
+      <div class="grid__item medium-up--one-half">
+        <input
+          type="text"
+          id="ContactFormName-{{ section.id }}"
+          class="input-full"
+          name="contact[name]"
+          autocapitalize="words"
+          placeholder="{{ 'contact.form.name' | t }}"
+          value="{% if form.name %}{{ form.name }}{% elsif customer %}{{ customer.name }}{% endif %}">
+      </div>
+
+      <div class="grid__item medium-up--one-half">
+        <input
+          type="email"
+          id="ContactFormEmail-{{ section.id }}"
+          class="input-full"
+          name="contact[email]"
+          autocorrect="off"
+          autocapitalize="off"
+          placeholder="{{ 'contact.form.email' | t }}"
+          value="{% if form.email %}{{ form.email }}{% elsif customer %}{{ customer.email }}{% endif %}">
+      </div>
+    </div>
+
+    {%- if section.settings.show_phone -%}
+      <input
+        type="tel"
+        id="ContactFormPhone-{{ section.id }}"
+        class="input-full"
+        name="contact[phone]"
+        pattern="[0-9\-]*"
+        placeholder="{{ 'contact.form.phone' | t }}"
+        value="{% if form.phone %}{{ form.phone }}{% elsif customer %}{{ customer.phone }}{% endif %}">
+    {%- endif -%}
+
+    <textarea
+      rows="5"
+      id="ContactFormMessage-{{ section.id }}"
+      class="input-full"
+      name="contact[body]"
+      placeholder="{{ 'contact.form.message' | t }}">{% if form.body %}{{ form.body }}{% endif %}</textarea>
+
+    <button type="submit" id="contact-form-submit-{{ section.id }}" class="btn">
+      {{ 'contact.form.send' | t }}
+    </button>
+
+        {% comment %}
+          Remove the following three lines of code to remove the note
+          about being protected by Google's reCAPTCHA service.
+          By removing it, the small reCAPTCHA widget will appear in the
+          bottom right corner of the page.
+        {% endcomment %}
+        {{ 'shopify.online_store.spam_detection.disclaimer_html' | t }}
+
+      {%- endform -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.contact-form.name",
+  "class": "index-section",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "t:sections.contact-form.settings.content"
+    },
+    {
+      "type": "header",
+      "content": "Section background"
+    },
+    {
+      "type": "image_picker",
+      "id": "section_bg_image",
+      "label": "Background image (cover / center)"
+    },
+    {
+      "type": "text",
+      "id": "pretitle",
+      "label": "Pre-title",
+      "default": "Pre-title"
+    },
+    {
+      "type": "image_picker",
+      "id": "pretitle_icon",
+      "label": "Pre-title icon"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "t:sections.contact-form.settings.title.label",
+      "default": "Contact us"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "t:sections.contact-form.settings.text.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_phone",
+      "label": "t:sections.contact-form.settings.show_phone.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "narrow_column",
+      "label": "t:sections.contact-form.settings.narrow_column.label",
+      "default": true
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.contact-form.presets.contact_form.name"
+    }
+  ],
+  "disabled_on": {
+    "groups": ["footer", "header", "custom.popups"]
+  }
+}
+{% endschema %}
