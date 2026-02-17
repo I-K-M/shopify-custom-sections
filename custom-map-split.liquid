@@ -1,0 +1,303 @@
+{%- if section.settings.divider -%}<div class="section--divider">{%- endif -%}
+
+{% style %}
+  {% if section.settings.top_padding == false %}
+    #shopify-section-{{ section.id }} .index-section { margin-top: 0 !important; }
+  {% endif %}
+  {% if section.settings.bottom_padding == false %}
+    #shopify-section-{{ section.id }} .index-section { margin-bottom: 0 !important; }
+  {% endif %}
+
+  #shopify-section-{{ section.id }} .contact-split {
+    padding: 60px 0;
+  }
+
+  #shopify-section-{{ section.id }} .contact-split__grid{
+    display: grid;
+    gap: 32px;
+    align-items: center;
+  }
+
+  @media (min-width: 990px){
+    #shopify-section-{{ section.id }} .contact-split__grid{
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 48px;
+    }
+  }
+
+  #shopify-section-{{ section.id }} .contact-split__map{
+    border-radius: 0 22px 22px 0;
+    overflow: hidden;
+    background: #f3f4f6;
+  }
+
+  #shopify-section-{{ section.id }} .contact-split__map iframe{
+    width: 100%;
+    height: 100%;
+    min-height: 340px;
+    border: 0;
+    display:block;
+  }
+
+  @media (min-width: 990px){
+    #shopify-section-{{ section.id }} .contact-split__map iframe{ min-height: 420px; }
+  }
+
+  #shopify-section-{{ section.id }} .contact-split__meta{
+    max-width: 520px;
+    padding:1rem;
+  }
+
+  #shopify-section-{{ section.id }} .contact-split__pretitle{
+    display:flex;
+    align-items:center;
+    gap: 10px;
+    font-weight: 600;
+    font-size: 16px;
+    margin-bottom: 10px;
+    color: {{ section.settings.pretitle_color }};
+  }
+
+  #shopify-section-{{ section.id }} .contact-split__pretitle img{
+    width: 28px;
+    height: 28px;
+    object-fit: contain;
+    display:block;
+  }
+
+  #shopify-section-{{ section.id }} .contact-split__title{
+    margin: 0 0 24px;
+    font-size: 44px;
+    line-height: 1.05;
+    color: {{ section.settings.heading_color }};
+  }
+
+  @media (max-width: 749px){
+    #shopify-section-{{ section.id }} .contact-split__title{ font-size: 34px; }
+  }
+
+  #shopify-section-{{ section.id }} .contact-split__row{
+    display:flex;
+    gap: 14px;
+    align-items:flex-start;
+    margin: 16px 0;
+  }
+
+  #shopify-section-{{ section.id }} .contact-split__icon{
+    width: 44px;
+    height: 44px;
+    border-radius: 999px;
+    background: {{ section.settings.accent_color }};
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex: 0 0 44px;
+  }
+
+  #shopify-section-{{ section.id }} .contact-split__icon svg{
+    width: 20px;
+    height: 20px;
+    fill: #fff;
+    display:block;
+  }
+
+  #shopify-section-{{ section.id }} .contact-split__label{
+    font-weight: 700;
+    margin: 0;
+    color: {{ section.settings.text_color }};
+    line-height: 1.2;
+  }
+
+  #shopify-section-{{ section.id }} .contact-split__value{
+    margin: 4px 0 0;
+    color: {{ section.settings.text_color }};
+    opacity: 0.9;
+    line-height: 1.35;
+  }
+
+  #shopify-section-{{ section.id }} .contact-split__value a{
+    color: inherit;
+    text-decoration: none;
+  }
+
+  #shopify-section-{{ section.id }} .contact-split__social{
+    display:flex;
+    gap: 10px;
+    margin-top: 22px;
+    flex-wrap: wrap;
+  }
+
+  #shopify-section-{{ section.id }} .contact-split__social a{
+    width: 44px;
+    height: 44px;
+    border-radius: 999px;
+    background: {{ section.settings.accent_color }};
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-decoration:none;
+  }
+
+  #shopify-section-{{ section.id }} .contact-split__social svg{
+    width: 18px;
+    height: 18px;
+    fill: #fff;
+    display:block;
+  }
+{% endstyle %}
+
+<div class="index-section">
+  <div class="page-width contact-split">
+    <div class="contact-split__grid">
+
+      <div class="contact-split__map" data-aos>
+        {%- if section.settings.map_iframe != blank -%}
+          {{ section.settings.map_iframe }}
+        {%- else -%}
+          <iframe
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            src="https://www.google.com/maps?q={{ section.settings.map_query | url_encode }}&output=embed">
+          </iframe>
+        {%- endif -%}
+      </div>
+
+      <div class="contact-split__meta" data-aos>
+        {%- if section.settings.pretitle != blank -%}
+          <div class="contact-split__pretitle">
+            {%- if section.settings.pretitle_icon != blank -%}
+              <img
+                src="{{ section.settings.pretitle_icon | image_url: width: 40 }}"
+                alt=""
+                loading="lazy"
+                width="18"
+                height="18">
+            {%- endif -%}
+            <span>{{ section.settings.pretitle }}</span>
+          </div>
+        {%- endif -%}
+
+        {%- if section.settings.title != blank -%}
+          <h2 class="contact-split__title">{{ section.settings.title }}</h2>
+        {%- endif -%}
+
+        {%- if section.settings.business_name != blank or section.settings.address != blank -%}
+          <div class="contact-split__row">
+            <div class="contact-split__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M12 2c-3.9 0-7 3.1-7 7 0 5.3 7 13 7 13s7-7.7 7-13c0-3.9-3.1-7-7-7zm0 9.5c-1.4 0-2.5-1.1-2.5-2.5S10.6 6.5 12 6.5s2.5 1.1 2.5 2.5S13.4 11.5 12 11.5z"/></svg>
+            </div>
+            <div>
+              {%- if section.settings.business_name != blank -%}
+                <p class="contact-split__label">{{ section.settings.business_name }}</p>
+              {%- endif -%}
+              {%- if section.settings.address != blank -%}
+                <p class="contact-split__value">{{ section.settings.address }}</p>
+              {%- endif -%}
+            </div>
+          </div>
+        {%- endif -%}
+
+        {%- if section.settings.phone != blank -%}
+          <div class="contact-split__row">
+            <div class="contact-split__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M6.6 10.8c1.5 2.9 3.7 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1.1-.3 1.2.4 2.5.6 3.8.6.6 0 1 .4 1 1V21c0 .6-.4 1-1 1C10.4 22 2 13.6 2 3c0-.6.4-1 1-1h3.9c.6 0 1 .4 1 1 0 1.3.2 2.6.6 3.8.1.4 0 .8-.3 1.1L6.6 10.8z"/></svg>
+            </div>
+            <div>
+              <p class="contact-split__label">{{ section.settings.phone_label }}</p>
+              <p class="contact-split__value">
+                <a href="tel:{{ section.settings.phone | remove: ' ' | remove: '(' | remove: ')' | remove: '-' }}">
+                  {{ section.settings.phone }}
+                </a>
+              </p>
+            </div>
+          </div>
+        {%- endif -%}
+
+        <div class="contact-split__social">
+          {%- if section.settings.social_youtube != blank -%}
+            <a href="{{ section.settings.social_youtube }}" target="_blank" rel="noopener" aria-label="YouTube">
+              <svg viewBox="0 0 24 24"><path d="M21.6 7.2c-.2-1.1-1-1.9-2.1-2.1C17.7 4.7 12 4.7 12 4.7s-5.7 0-7.5.4c-1.1.2-1.9 1-2.1 2.1C2 9 2 12 2 12s0 3 .4 4.8c.2 1.1 1 1.9 2.1 2.1 1.8.4 7.5.4 7.5.4s5.7 0 7.5-.4c1.1-.2 1.9-1 2.1-2.1.4-1.8.4-4.8.4-4.8s0-3-.4-4.8zM10.2 14.8V9.2l4.9 2.8-4.9 2.8z"/></svg>
+            </a>
+          {%- endif -%}
+
+          {%- if section.settings.social_pinterest != blank -%}
+            <a href="{{ section.settings.social_pinterest }}" target="_blank" rel="noopener" aria-label="Pinterest">
+              <svg viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.1 2 11.2c0 3.7 2.2 6.9 5.3 8.3-.1-.7-.2-1.8 0-2.6l1.4-5.8s-.4-.8-.4-2c0-1.9 1.1-3.3 2.5-3.3 1.2 0 1.7.9 1.7 1.9 0 1.2-.8 2.9-1.2 4.5-.3 1.3.7 2.4 2 2.4 2.4 0 4.1-3.1 4.1-6.8 0-2.8-1.9-4.8-5.1-4.8-3.7 0-6 2.7-6 5.7 0 1 .4 2 .9 2.6.1.1.1.2.1.4l-.3 1.3c-.1.4-.3.5-.6.3-1.7-.7-2.5-2.6-2.5-4.7 0-3.5 2.9-7.7 8.8-7.7 4.7 0 7.8 3.4 7.8 7.1 0 4.9-2.7 8.6-6.7 8.6-1.3 0-2.5-.7-2.9-1.5l-.8 3.2c-.3 1-1 2.2-1.4 3 1 .3 2 .4 3.1.4 5.5 0 10-4.1 10-9.2S17.5 2 12 2z"/></svg>
+            </a>
+          {%- endif -%}
+
+          {%- if section.settings.social_facebook != blank -%}
+            <a href="{{ section.settings.social_facebook }}" target="_blank" rel="noopener" aria-label="Facebook">
+              <svg viewBox="0 0 24 24"><path d="M22 12a10 10 0 1 0-11.6 9.9v-7H8v-3h2.4V9.6c0-2.4 1.4-3.7 3.6-3.7 1 0 2 .2 2 .2v2.2h-1.1c-1.1 0-1.4.7-1.4 1.4V12H16l-.5 3h-2.5v7A10 10 0 0 0 22 12z"/></svg>
+            </a>
+          {%- endif -%}
+
+          {%- if section.settings.social_linkedin != blank -%}
+            <a href="{{ section.settings.social_linkedin }}" target="_blank" rel="noopener" aria-label="LinkedIn">
+              <svg viewBox="0 0 24 24"><path d="M4.98 3.5C4.98 4.9 3.9 6 2.5 6S0 4.9 0 3.5 1.1 1 2.5 1 4.98 2.1 4.98 3.5zM.5 24h4V7.9h-4V24zM8.5 7.9h3.8v2.2h.1c.5-1 1.8-2.2 3.8-2.2 4.1 0 4.8 2.7 4.8 6.2V24h-4v-8.6c0-2-.1-4.6-2.8-4.6-2.8 0-3.2 2.2-3.2 4.5V24h-4V7.9z"/></svg>
+            </a>
+          {%- endif -%}
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</div>
+
+{%- if section.settings.divider -%}</div>{%- endif -%}
+
+{% schema %}
+{
+  "name": "Custom map split",
+  "settings": [
+    { "type": "header", "content": "Layout" },
+    { "type": "checkbox", "id": "divider", "label": "Show divider", "default": false },
+    { "type": "checkbox", "id": "top_padding", "label": "Top padding", "default": true },
+    { "type": "checkbox", "id": "bottom_padding", "label": "Bottom padding", "default": true },
+
+    { "type": "header", "content": "Map" },
+    {
+      "type": "textarea",
+      "id": "map_iframe",
+      "label": "Google Maps iframe embed (optional)",
+      "info": "Paste the full iframe embed code. If empty, we use Map query below."
+    },
+    {
+      "type": "text",
+      "id": "map_query",
+      "label": "Map query (fallback)",
+      "default": "14 Garden Street New York USA"
+    },
+
+    { "type": "header", "content": "Content" },
+    { "type": "text", "id": "pretitle", "label": "Pre-title", "default": "Let’s get in touch." },
+    { "type": "image_picker", "id": "pretitle_icon", "label": "Pre-title icon" },
+    { "type": "text", "id": "title", "label": "Title", "default": "Contact details" },
+
+    { "type": "text", "id": "business_name", "label": "Business name", "default": "Business Name" },
+    { "type": "text", "id": "address", "label": "Address", "default": "14 Garden Street New York USA" },
+
+    { "type": "text", "id": "phone_label", "label": "Phone label", "default": "Phone No." },
+    { "type": "text", "id": "phone", "label": "Phone number", "default": "(07) 5593 5133" },
+
+    { "type": "header", "content": "Social links" },
+    { "type": "url", "id": "social_youtube", "label": "YouTube URL" },
+    { "type": "url", "id": "social_pinterest", "label": "Pinterest URL" },
+    { "type": "url", "id": "social_facebook", "label": "Facebook URL" },
+    { "type": "url", "id": "social_linkedin", "label": "LinkedIn URL" },
+
+    { "type": "header", "content": "Colours" },
+    { "type": "color", "id": "accent_color", "label": "Accent (icons + circles)", "default": "#6BB21B" },
+    { "type": "color", "id": "heading_color", "label": "Heading colour", "default": "#163A1A" },
+    { "type": "color", "id": "text_color", "label": "Text colour", "default": "#163A1A" },
+    { "type": "color", "id": "pretitle_color", "label": "Pre-title colour", "default": "#163A1A" }
+  ],
+  "presets": [
+    { "name": "Custom map split" }
+  ],
+  "disabled_on": {
+    "groups": ["footer", "header", "custom.popups"]
+  }
+}
+{% endschema %}
