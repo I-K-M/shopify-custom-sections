@@ -1,0 +1,227 @@
+<section class="why-section" style="background-image:url({{ section.settings.bg_image | image_url: width: 2000 }});">
+    
+      <div class="why-inner">
+    
+        <div class="why-left">
+          {%- if section.settings.pretitle != blank -%}
+            <div class="section-header__pretitle pretitle_left pretitle_white">
+              {%- if section.settings.pretitle_icon != blank -%}
+                <img
+                  class="section-header__pretitle-icon"
+                  src="{{ section.settings.pretitle_icon | image_url: width: 48 }}"
+                  alt=""
+                  loading="lazy"
+                  width="30"
+                  height="30">
+              {%- endif -%}
+              <span>{{ section.settings.pretitle }}</span>
+            </div>
+          {%- endif -%}
+    
+          {% if section.settings.title != blank %}
+            <h2 class="td-h1">{{ section.settings.title }}</h2>
+          {% endif %}
+        </div>
+    
+        <div class="why-right">
+          <div class="why-content">
+            {%- if selected and selected.why_choose != blank -%}
+              {{ selected.why_choose | metafield_tag }}
+            {%- else -%}
+              {{ section.settings.content }}
+            {%- endif -%}
+          </div>
+    
+          {% if section.settings.image_right != blank %}
+            <img
+              src="{{ section.settings.image_right | image_url: width: 600 }}"
+              class="img-top"
+              alt=""
+              loading="lazy"
+              width="300"
+              height="300">
+          {% endif %}
+    
+          {% if section.settings.image_left != blank %}
+            <img
+              src="{{ section.settings.image_left | image_url: width: 600 }}"
+              class="img-bottom"
+              alt=""
+              loading="lazy"
+              width="300"
+              height="300">
+          {% endif %}
+    
+        </div>
+    
+      </div>
+    </section>
+    
+    <style>
+    .why-section {
+      background-size: cover;
+      background-position: center;
+      padding: 0 20px;
+      position:relative;
+      margin-bottom: 6em;
+      margin-top:2em
+    }
+    
+    .why-inner {
+      max-width: 1200px;
+      margin: auto;
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      gap: 0 40px;
+      align-items: stretch;
+      position:relative;
+      top:80px
+    }
+    
+    /* LEFT */
+    
+    .badge {
+      display: inline-block;
+      margin-bottom: 20px;
+      font-size: 14px;
+      opacity: 0.9;
+    }
+    
+    .why-left h2 {
+      font-size: clamp(32px, 4vw, 52px);
+      line-height: 1.1;
+      font-weight: 700;color: white;
+    }
+    
+    /* RIGHT */
+    .why-right {
+      position: relative;
+      background: #f6f3e5;
+      border-radius: 32px;
+      padding: 60px 80px 40px;
+    }
+    
+    .why-content > p:first-child {
+      margin-right:100px
+    }
+    
+    /* IMAGES */
+    .img-top {
+      position: absolute;
+      top: -40px;
+      right: -40px;
+      width: 200px;
+      border-radius: 24px;
+      border: 6px solid #f6f3e5;
+    }
+    
+    .img-bottom {
+      position: absolute;
+      bottom: 30px;
+      left: -170px;
+      width: 220px;
+      border-radius: 24px;
+      border: 6px solid #f6f3e5;
+    }
+    
+    /* RESPONSIVE */
+    @media (max-width: 900px) {
+    
+    
+      .why-inner {
+        grid-template-columns: 1fr;
+        gap:20px;
+      }
+      .why-right {
+        padding: 0;
+        display: grid;
+        grid-template-rows: 50px repeat(6,auto) 50px;
+        grid-template-columns: 20px repeat(5,auto) 20px;
+        background:none
+    }
+      .img-top,
+      .img-bottom {
+      position: static;
+        width: 100%;
+        grid-area: 6/2/8/6;
+        z-index: 2;
+      }
+    
+    .img-bottom {
+      grid-area: 7/4/9/7;
+      border-width: 8px;
+    }
+    .why-content {
+    grid-area: 2/2/6/7;
+        z-index: 1;
+    
+    }
+    .why-content > p:first-child {
+      margin-right:initial
+    }
+    .why-right:after {
+    content:'';
+    display:block;
+    background:#f6f3e5;
+    grid-area: 1/1/8/9;
+    z-index:0;
+    border-radius:28px
+    }
+    .why-section {
+    padding:
+    0 20px 0
+    }
+    
+    }
+    </style>
+    
+    {% schema %}
+    {
+      "name": "Custom product description",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "bg_image",
+          "label": "Background image"
+        },
+        {
+          "type": "image_picker",
+          "id": "image_left",
+          "label": "Left image"
+        },
+        {
+          "type": "image_picker",
+          "id": "image_right",
+          "label": "Right image"
+        },
+        {
+          "type": "image_picker",
+          "id": "pretitle_icon",
+          "label": "Pretitle icon"
+        },
+        {
+          "type": "text",
+          "id": "pretitle",
+          "label": "Pretitle",
+          "default": "Premium Product"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Why Choose this Product?"
+        },
+        {
+          "type": "richtext",
+          "id": "content",
+          "label": "Content",
+          "default": "<p>Your content here</p>"
+        }
+      ],
+      "presets": [
+        {
+          "name": "Custom product description"
+        }
+      ]
+    }
+    {% endschema %}
