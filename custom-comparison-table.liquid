@@ -1,0 +1,209 @@
+<div class="comparison-wrapper">
+    <div class="comparison-card">
+        <div class="comparison-content">
+
+            <div class="comparison-header">
+                <div></div>
+                <div class="brand">Our Products</div>
+                <div class="others">Others</div>
+            </div>
+
+            <div class="comparison-row">
+                <div class="label">Grade</div>
+                <div class="good">Commercial</div>
+                <div class="bad">Lightweight</div>
+            </div>
+
+            <div class="comparison-row">
+                <div class="label">Internal</div>
+                <div class="good">Yes</div>
+                <div class="bad">None</div>
+            </div>
+
+            <div class="comparison-row">
+                <div class="label">Warranty</div>
+                <div class="good">5 years</div>
+                <div class="bad">1–2 years</div>
+            </div>
+
+            <div class="comparison-row">
+                <div class="label">USA Engineered</div>
+                <div class="good">Yes</div>
+                <div class="bad">No</div>
+            </div>
+
+            <div class="comparison-row">
+                <div class="label">Structural</div>
+                <div class="good">Reinforced</div>
+                <div class="bad">Flat</div>
+            </div>
+
+        </div>
+
+        <div class="comparison-footer">
+            <div class="comparison-footer-logo">
+  {% if section.settings.footer_logo != blank %}
+    {{ section.settings.footer_logo
+      | image_url: width: 70
+      | image_tag: loading: 'lazy', alt: 'Logo'
+    }}
+  {% endif %}
+</div>
+
+            
+            <div>Designed to withstand years of work.<br>
+                Built once. Built properly.</div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .comparison-wrapper {
+        overflow-x: auto;
+        padding: 0 20px;
+    }
+
+    .comparison-card {
+        max-width: 1160px;
+        background: #f6f3e5;
+        border-radius: 24px;
+        overflow: hidden;
+        margin:0 auto
+    }
+
+    .comparison-content {
+        padding: 40px 30px;
+    }
+
+    .comparison-header,
+    .comparison-row {
+        display: grid;
+        grid-template-columns: 1.5fr 2fr 2fr;
+        gap: 20px;
+        align-items: center;
+    }
+
+    .comparison-header {
+        margin-bottom: 20px;
+        font-weight: 600;
+    }
+
+    .brand,
+    .others {
+        color: #2f7a4b;
+        font-style:italic
+    }
+
+    .comparison-row {
+        padding: 10px 0;
+    }
+
+    .label {
+        font-weight: 700;
+  text-transform: capitalize;
+  letter-spacing: 0;
+  font-size: inherit;
+    }
+
+    .good::before {
+        content: "✓ ";
+        color: #2f7a4b;
+        font-weight: bold;
+    }
+
+    .bad::before {
+        content: "✕ ";
+        color: #000;
+        font-weight: bold;
+    }
+
+    .comparison-footer {
+        background: #0f7f3a ;
+         {% if section.settings.footer_bg != blank %}
+      background-image: url({{ section.settings.footer_bg | image_url: width: 2000 }});
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+    {% endif %}
+        color: white;
+        padding: 10px 20px;
+        display: flex;
+        align-items :center;
+        justify-content: center
+    }
+
+    .comparison-footer-logo {
+        padding-right: 40px;
+        text-align: right;
+    }
+    .comparison-footer-logo img {
+    display:inline-block
+}
+
+    @media (max-width: 768px) {
+        .comparison-wrapper {
+        padding:1rem
+    }
+        .comparison-header>div:first-child {
+            display: none
+        }
+
+
+        .comparison-header {
+            display: flex;
+            gap: 0 20px;
+            letter-spacing:0;
+            flex-direction: column;
+        }
+        .others {font-weight:400;color:#333}
+         .others:before {
+        content:'VS '}
+
+        .comparison-row {
+            grid-template-columns: 1fr 2fr;
+            grid-template-areas:
+                "label good"
+                "label bad";
+            row-gap: 6px;
+        }
+
+        .comparison-row .label {
+            grid-area: label;
+            align-self: normal;
+        }
+
+        .comparison-row .good {
+            grid-area: good;
+            color:green;
+            font-weight:600
+        }
+
+        .comparison-row .bad {
+            grid-area: bad;
+        }
+
+        .comparison-card {
+            min-width: auto;
+        }
+    }
+</style>
+{% schema %}
+{
+  "name": "Custom comparison table",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "footer_logo",
+      "label": "Footer logo image"
+    },
+    {
+  "type": "image_picker",
+  "id": "footer_bg",
+  "label": "Footer background image"
+}
+  ],
+  "presets": [
+    { "name": "Custom comparison table" }
+  ]
+}
+{% endschema %}
