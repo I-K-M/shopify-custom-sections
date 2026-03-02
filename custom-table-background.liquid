@@ -1,0 +1,297 @@
+{% comment %}
+  Section: Left content (50%) with text + table, right empty (50%) with background image underneath.
+{% endcomment %}
+
+{% assign sid = section.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .sf-split-table-{{ sid }}{
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    padding: {{ section.settings.section_padding_y }}px 0;
+    min-height: {{ section.settings.min_height }}px;
+  }
+
+  .sf-split-table__bg-{{ sid }}{
+    position: absolute;
+    top: 0; right: 0;
+    width: 50%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+  .sf-split-table__bg-img-{{ sid }}{
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center right;
+    display: block;
+  }
+
+  .sf-split-table__wrap-{{ sid }}{
+    position: relative;
+    z-index: 1;
+    display: flex;
+    width: 100%;
+    min-height: {{ section.settings.min_height }}px;
+    gap: 40px;
+  }
+  .sf-split-table__left-{{ sid }},
+  .sf-split-table__right-{{ sid }}{
+    width: 50%;
+  }
+  .sf-split-table__right-{{ sid }}{ background: transparent; }
+
+  .sf-split-table__left-{{ sid }}{
+    display: flex;
+    align-items: center;
+  }
+
+  /* Constrained content width */
+  .sf-split-table__content-{{ sid }}{
+    width: 100%;
+    max-width: {{ section.settings.content_max_width }}px;
+    padding: 0 {{ section.settings.section_padding_x }}px;
+  }
+
+  .sf-split-table__kicker-{{ sid }}{
+    margin: 0 0 10px 0;
+    font-size: {{ section.settings.kicker_size }}px;
+    color: {{ section.settings.kicker_color }};
+    line-height: 1.3;
+  }
+
+  .sf-split-table__heading-{{ sid }}{
+    margin: 0 0 {{ section.settings.heading_gap }}px 0;
+    font-size: {{ section.settings.heading_size }}px;
+    color: {{ section.settings.heading_color }};
+    line-height: 1.15;
+    text-align: left;
+  }
+
+  .sf-split-table__intro-{{ sid }}{
+    margin: 0 0 {{ section.settings.intro_gap }}px 0;
+    font-size: {{ section.settings.intro_size }}px;
+    color: {{ section.settings.intro_color }};
+    line-height: 1.6;
+  }
+  .sf-split-table__intro-{{ sid }} p{ margin: 0 0 12px 0; }
+  .sf-split-table__intro-{{ sid }} p:last-child{ margin-bottom: 0; }
+
+  .sf-split-table__table-title-{{ sid }}{
+    margin: 0 0 10px 0;
+    font-size: {{ section.settings.table_title_size }}px;
+    color: {{ section.settings.table_title_color }};
+    line-height: 1.25;
+    font-weight: 600;
+  }
+
+  .sf-split-table__table-{{ sid }}{
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0 0 {{ section.settings.after_table_gap }}px 0;
+  }
+  .sf-split-table__table-{{ sid }} th,
+  .sf-split-table__table-{{ sid }} td{
+    padding: {{ section.settings.cell_padding_y }}px 0;
+    text-align: left;
+    vertical-align: top;
+    border-bottom: 1px solid {{ section.settings.table_border_color }};
+    font-size: {{ section.settings.table_text_size }}px;
+    color: {{ section.settings.table_text_color }};
+    line-height: 1.55;
+  }
+  .sf-split-table__table-{{ sid }} th{
+    font-size: {{ section.settings.table_head_size }}px;
+    color: {{ section.settings.table_head_color }};
+    font-weight: 600;
+    padding-top: 0;
+  }
+  .sf-split-table__table-{{ sid }} td:first-child,
+  .sf-split-table__table-{{ sid }} th:first-child{
+    width: {{ section.settings.col1_width }}%;
+    padding-right: 18px;
+  }
+  .sf-split-table__table-{{ sid }} td:last-child,
+  .sf-split-table__table-{{ sid }} th:last-child{
+    width: {{ 100 | minus: section.settings.col1_width }}%;
+  }
+
+  .sf-split-table__note-{{ sid }}{
+    margin: 0;
+    font-size: {{ section.settings.note_size }}px;
+    color: {{ section.settings.note_color }};
+    line-height: 1.6;
+  }
+  .sf-split-table__note-{{ sid }} p{ margin: 0 0 10px 0; }
+  .sf-split-table__note-{{ sid }} p:last-child{ margin-bottom: 0; }
+
+  /* Mobile */
+  @media (max-width: 768px){
+    .sf-split-table__wrap-{{ sid }}{
+      flex-direction: column;
+      min-height: auto;
+      gap: 0;
+    }
+    .sf-split-table__left-{{ sid }},
+    .sf-split-table__right-{{ sid }}{
+      width: 100%;
+      margin-top: 1em;
+    }
+
+    .sf-split-table__bg-{{ sid }}{
+      position: relative;
+      width: 100%;
+      height: {{ section.settings.mobile_bg_height }}px;
+    }
+
+    .sf-split-table__left-{{ sid }}{
+      align-items: stretch;
+      padding-bottom: 20px;
+    }
+  }
+
+  @media (max-width: 540px){
+    .sf-split-table__bg-{{ sid }} img{
+      margin-left: 2em;
+    }
+  }
+{% endstyle %}
+
+<section class="sf-split-table-{{ sid }}">
+  <div class="sf-split-table__bg-{{ sid }}">
+    {% if section.settings.background_image != blank %}
+      <img
+        class="sf-split-table__bg-img-{{ sid }}"
+        src="{{ section.settings.background_image | image_url: width: 1800 }}"
+        alt="{{ section.settings.background_image.alt | escape }}"
+        loading="lazy"
+        width="1800"
+        height="1800"
+      >
+    {% endif %}
+  </div>
+
+  <div class="sf-split-table__wrap-{{ sid }} page-width">
+    <div class="sf-split-table__left-{{ sid }}">
+      <div class="sf-split-table__content-{{ sid }}">
+
+        {% if section.settings.kicker != blank %}
+          <div class="sf-split-table__kicker-{{ sid }}">{{ section.settings.kicker }}</div>
+        {% endif %}
+
+        {% if section.settings.heading != blank %}
+          <h2 class="sf-split-table__heading-{{ sid }}">{{ section.settings.heading }}</h2>
+        {% endif %}
+
+        {% if section.settings.intro != blank %}
+          <div class="sf-split-table__intro-{{ sid }}">{{ section.settings.intro }}</div>
+        {% endif %}
+
+        {% if section.settings.table_title != blank %}
+          <div class="sf-split-table__table-title-{{ sid }}">{{ section.settings.table_title }}</div>
+        {% endif %}
+
+        <table class="sf-split-table__table-{{ sid }}">
+          <thead>
+            <tr>
+              <th scope="col">{{ section.settings.col1_label }}</th>
+              <th scope="col">{{ section.settings.col2_label }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for block in section.blocks %}
+              {% if block.type == 'row' %}
+                <tr {{ block.shopify_attributes }}>
+                  <td>{{ block.settings.col1 }}</td>
+                  <td>{{ block.settings.col2 }}</td>
+                </tr>
+              {% endif %}
+            {% endfor %}
+          </tbody>
+        </table>
+
+        {% if section.settings.note != blank %}
+          <div class="sf-split-table__note-{{ sid }}">{{ section.settings.note }}</div>
+        {% endif %}
+
+      </div>
+    </div>
+
+    <div class="sf-split-table__right-{{ sid }}" aria-hidden="true"></div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Custom table + background",
+  "settings": [
+    { "type": "header", "content": "Background" },
+    { "type": "image_picker", "id": "background_image", "label": "Background image (right)" },
+
+    { "type": "header", "content": "Layout" },
+    { "type": "range", "id": "min_height", "label": "Minimum height", "min": 360, "max": 1000, "step": 20, "unit": "px", "default": 600 },
+    { "type": "range", "id": "section_padding_y", "label": "Padding top/bottom", "min": 0, "max": 140, "step": 10, "unit": "px", "default": 40 },
+    { "type": "range", "id": "section_padding_x", "label": "Content padding left/right", "min": 0, "max": 90, "step": 5, "unit": "px", "default": 40 },
+    { "type": "range", "id": "content_max_width", "label": "Content max width", "min": 320, "max": 900, "step": 10, "unit": "px", "default": 620 },
+
+    { "type": "range", "id": "mobile_bg_height", "label": "Mobile background height", "min": 180, "max": 520, "step": 20, "unit": "px", "default": 300 },
+
+    { "type": "header", "content": "Text" },
+    { "type": "text", "id": "kicker", "label": "Kicker (small text)", "default": "About" },
+    { "type": "range", "id": "kicker_size", "label": "Kicker size", "min": 10, "max": 18, "step": 1, "unit": "px", "default": 12 },
+    { "type": "color", "id": "kicker_color", "label": "Kicker color", "default": "#6b6b6b" },
+
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Built.<br>Designed." },
+    { "type": "range", "id": "heading_size", "label": "Heading size", "min": 18, "max": 56, "step": 2, "unit": "px", "default": 34 },
+    { "type": "color", "id": "heading_color", "label": "Heading color", "default": "#111111" },
+    { "type": "range", "id": "heading_gap", "label": "Heading bottom gap", "min": 0, "max": 80, "step": 5, "unit": "px", "default": 15 },
+
+    { "type": "richtext", "id": "intro", "label": "Intro text", "default": "<p>Every product is engineered as a complete system — combining strength, smarter design, and materials built for long-term performance.</p>" },
+    { "type": "range", "id": "intro_size", "label": "Intro text size", "min": 12, "max": 20, "step": 1, "unit": "px", "default": 14 },
+    { "type": "color", "id": "intro_color", "label": "Intro text color", "default": "#555555" },
+    { "type": "range", "id": "intro_gap", "label": "Intro bottom gap", "min": 0, "max": 60, "step": 5, "unit": "px", "default": 15 },
+
+    { "type": "richtext", "id": "note", "label": "Note (below table)", "default": "<p>USA designed. Now shipping.</p>" },
+    { "type": "range", "id": "note_size", "label": "Note size", "min": 12, "max": 20, "step": 1, "unit": "px", "default": 13 },
+    { "type": "color", "id": "note_color", "label": "Note color", "default": "#666666" },
+
+    { "type": "header", "content": "Table" },
+    { "type": "text", "id": "table_title", "label": "Table title", "default": "Quality breakdown:" },
+    { "type": "range", "id": "table_title_size", "label": "Table title size", "min": 12, "max": 24, "step": 1, "unit": "px", "default": 14 },
+    { "type": "color", "id": "table_title_color", "label": "Table title color", "default": "#111111" },
+
+    { "type": "text", "id": "col1_label", "label": "Column 1 label", "default": "Use Case" },
+    { "type": "text", "id": "col2_label", "label": "Column 2 label", "default": "Best" },
+
+    { "type": "range", "id": "col1_width", "label": "Column 1 width", "min": 30, "max": 70, "step": 1, "unit": "%", "default": 55 },
+
+    { "type": "range", "id": "cell_padding_y", "label": "Row padding (top/bottom)", "min": 6, "max": 22, "step": 1, "unit": "px", "default": 10 },
+
+    { "type": "range", "id": "table_head_size", "label": "Table header size", "min": 12, "max": 18, "step": 1, "unit": "px", "default": 13 },
+    { "type": "color", "id": "table_head_color", "label": "Table header color", "default": "#111111" },
+
+    { "type": "range", "id": "table_text_size", "label": "Table text size", "min": 12, "max": 18, "step": 1, "unit": "px", "default": 13 },
+    { "type": "color", "id": "table_text_color", "label": "Table text color", "default": "#444444" },
+
+    { "type": "color", "id": "table_border_color", "label": "Table border color", "default": "#e6e6e6" },
+
+    { "type": "range", "id": "after_table_gap", "label": "Space after table", "min": 0, "max": 60, "step": 5, "unit": "px", "default": 15 }
+  ],
+  "blocks": [
+    {
+      "type": "row",
+      "name": "Table row",
+      "settings": [
+        { "type": "text", "id": "col1", "label": "Column 1 (Use case)", "default": "Premium" },
+        { "type": "text", "id": "col2", "label": "Column 2 (Best)", "default": "304" }
+      ]
+    }
+  ],
+  "max_blocks": 12,
+  "presets": [
+    { "name": "Custom table + background" }
+  ]
+}
+{% endschema %}
